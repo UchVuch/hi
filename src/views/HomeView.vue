@@ -97,12 +97,12 @@
         <v-tabs v-model="tab" fixed-tabs>
           <v-tab value="one"> <v-icon class="mr-2" size="large" icon="mdi-check-circle" title="Этап активен" color="green"></v-icon> Подписание</v-tab>
           <v-tab value="two"> 
-            <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage2" title="Этап активен" color="green"></v-icon> 
+            <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 0" title="Этап активен" color="green"></v-icon> 
             <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
             Отгрузка
           </v-tab>
           <v-tab value="three">
-            <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage3" title="Этап активен" color="green"></v-icon> 
+            <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 1" title="Этап активен" color="green"></v-icon> 
             <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
             Приемка
           </v-tab>
@@ -113,64 +113,46 @@
                 <v-container>
                   <v-form ref="form1">
                     <v-row>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.seller_name"
                           label="Имя продавца*"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                         v-model="contract.customer_name"
                           label="Имя клиента*"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                         v-model="contract.number"
                           label="Число*"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                         v-model="contract.date"
                           label="Дата*"
-                          :rules="required"
+                          :rules="[isValidDate]"
+                          hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                          persistent-hint
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                      >
+                      <v-col cols="12">
                         <p>Условия</p>
                         <v-row>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                             v-model="contract.terms.date"
                               label="Дата"
                             ></v-text-field>
                           </v-col>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                               v-model="contract.terms.note"
                               label="Примечание"
@@ -178,25 +160,17 @@
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col
-                        cols="12"
-                      >
+                      <v-col cols="12">
                         <p>Контракт</p>
                         <v-row>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                             v-model="contract.procuring.contract.amount"
                               label="Сумма*"
                               :rules="required"
                             ></v-text-field>
                           </v-col>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                             v-model="contract.procuring.contract.date"
                               label="Дата*"
@@ -205,25 +179,17 @@
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col
-                        cols="12"
-                      >
+                      <v-col cols="12">
                         <p>Гарантия</p>
                         <v-row>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                             v-model="contract.procuring.guarantee.amount"
                               label="Сумма*"
                               :rules="required"
                             ></v-text-field>
                           </v-col>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                             v-model="contract.procuring.guarantee.date"
                               label="Дата*"
@@ -232,10 +198,7 @@
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <div>
                           <span class="mr-4">Оборудование</span>
                           <v-btn color="primary" title="Добавить">
@@ -245,17 +208,14 @@
                         <template v-for="item in contract.equipment">
                           <div class="pa-2 d-flex align-center">
                             <div class="text-h6">{{item?.name}} {{item?.variation}} — {{item?.price}} / {{item?.count }}</div>
-                            <div class="ml-4">
+                            <div class="d-flex ml-4">
                               <v-btn color="primary" title="Изменить" @click="dialogEquipment = true"><v-icon icon="mdi-pencil"></v-icon></v-btn>
                               <v-btn color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
                             </div>
                           </div>
                         </template>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-btn
                           color="warning"
                           variant="text"
@@ -274,40 +234,30 @@
             <v-window-item value="two">
               <v-card-text>
               <v-container>
-                <v-row v-if="!stage2">
-                  <v-col
-                    cols="12"
-                  >
+                <v-row v-if="stage === 0">
+                  <v-col cols="12">
                     <v-btn
                       color="primary"
                       variant="text"
                       block
-                      @click="validate"
+                      @click="stage = 1"
                     >
                       Начать этап
                     </v-btn>
                 </v-col>
                 </v-row>
-                <v-form ref="form2" v-if="stage2">
+                <v-form ref="form2" v-if="stage > 0">
                     <v-row>
-                      <v-col
-                        cols="12"
-                      >
+                      <v-col cols="12">
                         <p>Оборудование</p>
                         <v-row>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                               label="Сумма*"
                               :rules="required"
                             ></v-text-field>
                           </v-col>
-                          <v-col
-                            cols="12"
-                            md="6"
-                          >
+                          <v-col cols="12" md="6">
                             <v-text-field
                               label="Дата*"
                               :rules="required"
@@ -315,19 +265,14 @@
                           </v-col>
                         </v-row>
                       </v-col>
-                      <v-col
-                        cols="12"
-                      >
+                      <v-col cols="12">
                         <v-text-field
                           v-model="shipment.date"
                           label="Дата*"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-btn
                           color="warning"
                           variant="text"
@@ -345,47 +290,35 @@
             <v-window-item value="three">
               <v-card-text>
                 <v-container>
-                <v-row v-if="!stage2">
-                  <v-col
-                    cols="12"
-                  >
+                <v-row v-if="stage < 2">
+                  <v-col cols="12">
                     <v-btn
                       color="primary"
                       variant="text"
                       block
-                      v-if="!stage3"
-                      @click="stage3 = true"
+                      @click="stage = 2"
                     >
                       Начать этап
                     </v-btn>
                 </v-col>
                 </v-row>
-                <v-form ref="form2" v-if="stage3">
+                <v-form ref="form2" v-if="stage > 1">
                     <v-row>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                           v-model="inspection.penalties"
                           label="Штрафы*"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                         v-model="inspection.payment"
                           label="Оплата*"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-select
                         v-model="inspection.approved"
                           :items="['Да', 'Нет']"
@@ -426,40 +359,28 @@
                 <v-container>
                   <v-form>
                     <v-row>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                           v-model="equipment.name"
                           label="Название"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                         v-model="equipment.variation"
                           label="Вид"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                         v-model="equipment.price"
                           label="Стоимость"
                           :rules="required"
                         ></v-text-field>
                       </v-col>
-                      <v-col
-                        cols="12"
-                        md="6"
-                      >
+                      <v-col cols="12" md="6">
                         <v-text-field
                         v-model="equipment.count"
                           label="Количетсво"
@@ -481,7 +402,7 @@
             </v-btn>
             <v-btn
               color="primary"
-              @click="saveequipmentItem"
+              @click="saveEquipmentItem(0)"
             >
               Сохранить
             </v-btn>
@@ -499,6 +420,7 @@ export default {
     this.selectColumnsNames()
   },
   data: () => ({
+    stage: 0,
     equipment:{
           name:"equip2",
           count:2,
@@ -564,8 +486,6 @@ export default {
     ],
     alert: false,
     isTableEdit: false,
-    stage2: false,
-    stage3: false,
     tab: "one",
     dialog: false,
     dialogEquipment: false,
@@ -651,6 +571,7 @@ export default {
     ],
     rows: [
       {
+        stage: 2,
         contract:{
           status: true,
           seller_name: 'name1',
@@ -694,6 +615,7 @@ export default {
         }
       },
       {
+        stage: 1,
         contract:{
           seller_name:"",
           customer_name:"name4",
@@ -755,6 +677,73 @@ export default {
   },
 
   methods: {
+    isValidDate(date) {
+      const arr = date.split('.')
+      let dateString = `${arr[0]}/${arr[1]}/${arr[2]}`
+      // First check for the pattern
+      if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
+      {
+        console.log(false)
+        return 'Введите корректную дату'
+      } else {
+        console.log(true)
+      }
+
+      // Parse the date parts to integers
+      var parts = dateString.split("/");
+      var day = parseInt(parts[0], 10);
+      var month = parseInt(parts[1], 10);
+      var year = parseInt(parts[2], 10);
+
+      // console.log(parts, day, month, year)
+
+      // Check the ranges of month and year
+      if(year < 1970) {
+        return 'Введите корректный год больше 1969'
+      }
+      if(year > 3000) {
+        return 'Введите корректный год меньше 3000'
+      }
+      if(month == 0 || month > 12) {
+        return 'Введите корректный месяц мм, например 05'
+      }
+
+      var monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+      // Adjust for leap years
+      if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) monthLength[1] = 29;
+      // Check the range of the day
+      if (day > 0 && day <= monthLength[month - 1]) {
+        console.log(true)
+        return day > 0 && day <= monthLength[month - 1]
+      } else {
+        return 'Введите корректный день дд, , например 01'
+      }
+    },
+    validateDate() {
+      // const currentStartMonth = this.itemsMonth.indexOf(`${this.startMonth}`) + 1
+      // let startDayTwoChars=`${this.startDay}`
+      // if(startDayTwoChars.length===1){
+      //   startDayTwoChars='0'+startDayTwoChars
+      // }
+      // let startMonthTwoChars=`${currentStartMonth}`
+      // if (startMonthTwoChars.length===1){
+      //   startMonthTwoChars='0'+startMonthTwoChars
+      // }
+      // // console.log(`${this.startYear}-${startMonthTwoChars}-${startDayTwoChars}`)
+      // if (this.isValidDate(this.startDay,  currentStartMonth , this.startYear)) {
+      //   const newFormatDate = `${this.startYear}-${startMonthTwoChars}-${startDayTwoChars}`
+      //   const newdate = `${Math.floor(new Date(newFormatDate).getTime() / 1000)}`
+      //   this.startDate = newdate
+      //   // console.log(this.startDate)
+      // } else {
+      //   this.customAlert('Некорректная начальная дата')
+      //   return false
+      // }
+    },
+    saveEquipmentItem(index) {
+      this.contract.equipment[index] = {...this.equipment}
+    },
     openTenderModal(currentStage, tender) {
       this.dialog = true
       console.log(`Этап — ${currentStage}, тендер —`, tender)
@@ -817,20 +806,25 @@ export default {
     saveStage() {
       this.dialog = false
       console.log(this.contract)
-      this.rows[1].contract = {...this.contract}
+      this.rows[1].contract = { ...this.contract, date: Math.floor(new Date(this.contract.date.split('.').reverse().join('-')).getTime() / 1000) } 
       this.sortRows()
+      console.log(this.contract.date.split('.').reverse().join('-'))
+      console.log(new Date(this.contract.date.split('.').reverse().join('-')).getTime())
+      console.log(new Date(this.contract.date.split('.').reverse().join('-')).getTime() / 1000)
+      console.log(Math.floor(new Date(this.contract.date.split('.').reverse().join('-')).getTime() / 1000))
     },
-    async validate () {
-        const { valid } = await this.$refs.form1.validate()
+    // убрал, так как не надо для старта нового этапа заполнять все поля предыдущего
+    // async validate () {
+    //     const { valid } = await this.$refs.form1.validate()
 
-        // if (valid) this.tab = "two"
-        if (valid) {
-          this.stage2 = true
-        } else {
-          this.alert = true
-          setTimeout(()=> this.alert = false, 2000)
-        }
-    },
+    //     // if (valid) this.tab = "two"
+    //     if (valid) {
+    //       this.stage2 = true
+    //     } else {
+    //       this.alert = true
+    //       setTimeout(()=> this.alert = false, 2000)
+    //     }
+    // },
     resetValidation() {
       this.$refs.form1.resetValidation()
     },
