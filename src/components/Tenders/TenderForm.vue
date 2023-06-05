@@ -1,0 +1,461 @@
+<template>
+  <div>
+    <v-card style="overflow-y: auto;">
+    <v-card-title>
+      <span class="text-h5">Тендер</span>
+    </v-card-title>
+    <v-tabs v-model="tab" fixed-tabs>
+      <v-tab value="contract"> <v-icon class="mr-2" size="large" icon="mdi-check-circle" title="Этап активен" color="green"></v-icon> Подписание</v-tab>
+      <v-tab value="shipment"> 
+        <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 0" title="Этап активен" color="green"></v-icon> 
+        <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
+        Отгрузка
+      </v-tab>
+      <v-tab value="inspection">
+        <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 1" title="Этап активен" color="green"></v-icon> 
+        <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
+        Приемка
+      </v-tab>
+    </v-tabs>
+    <v-window v-model="tab" style="overflow-y: auto; height: 691px;">
+        <v-window-item value="contract">
+          <v-card-text>
+            <v-container>
+              <v-form ref="form1">
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="contract.seller_name"
+                      label="Имя продавца"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                    v-model="contract.customer_name"
+                      label="Имя клиента"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                    v-model="contract.number"
+                      label="Число"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                    v-model="contract.date"
+                      label="Дата"
+                      hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                      persistent-hint
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <p>Условия</p>
+                    <v-row>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                        v-model="contract.terms.date"
+                          label="Дата"
+                          hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                          persistent-hint
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="contract.terms.note"
+                          label="Примечание"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12">
+                    <p>Контракт</p>
+                    <v-row>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                        v-model="contract.procuring.contract.amount"
+                          label="Сумма"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="contract.procuring.contract.date"
+                          label="Дата"
+                          hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                          persistent-hint
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12">
+                    <p>Гарантия</p>
+                    <v-row>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="contract.procuring.guarantee.amount"
+                          label="Сумма"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="contract.procuring.guarantee.date"
+                          label="Дата"
+                          hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                          persistent-hint
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12">
+                    <p>Адреса и контакты</p>
+                    <v-row>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="contract.addresses"
+                          label="Адреса"
+                          hint="Укажите адреса через запятую"
+                          persistent-hint
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="contract.contacts"
+                          label="Контакты"
+                          hint="Укажите контакты через запятую"
+                          persistent-hint
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="12">
+                    <div>
+                      <span class="mr-4">Оборудование</span>
+                      <v-btn color="primary" title="Добавить" @click="addEquipment">
+                        <v-icon size="large" icon="mdi-plus"></v-icon>
+                      </v-btn>
+                    </div>
+                    <template v-for="item in contract.equipment">
+                      <div class="pa-2 d-flex align-center justify-space-between">
+                        <div class="text-h6">{{item?.name}} {{item?.variation}} — {{item?.price}} / {{item?.count }}</div>
+                        <div class="d-flex ml-4" style="margin-left: auto;">
+                          <v-btn @click="editEqipment(contract.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
+                          <v-btn @click="deleteEqipment(contract.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
+                        </div>
+                      </div>
+                    </template>
+                  </v-col>
+                  <!-- <v-col cols="12" md="6">
+                    <v-btn
+                      color="warning"
+                      variant="text"
+                      @click="resetValidation"
+                    >
+                      Очистить валидацию
+                    </v-btn>
+                  </v-col> -->
+                </v-row>
+              </v-form>
+            </v-container>
+          <small>* — заполните для перехода к следующему этапу</small>
+          </v-card-text>
+        </v-window-item>
+
+        <v-window-item value="shipment">
+          <v-card-text>
+          <v-container>
+            <v-row v-if="stage === 0">
+              <v-col cols="12">
+                <v-btn
+                  color="primary"
+                  variant="text"
+                  block
+                  @click="stage = 1"
+                >
+                  Начать этап
+                </v-btn>
+            </v-col>
+            </v-row>
+            <v-form ref="form2" v-if="stage > 0">
+                <v-row>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="shipment.date"
+                      label="Дата"
+                      hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                      persistent-hint
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <div>
+                      <span class="mr-4">Оборудование</span>
+                      <v-btn color="primary" title="Добавить" @click="addEquipment">
+                        <v-icon size="large" icon="mdi-plus"></v-icon>
+                      </v-btn>
+                    </div>
+                    <template v-for="item in shipment.equipment">
+                      <div class="pa-2 d-flex align-center justify-space-between">
+                        <div class="text-h6">{{item?.name}} {{item?.variation}} — {{item?.price}} / {{item?.count }}</div>
+                        <div class="d-flex ml-4" style="margin-left: auto;">
+                          <v-btn @click="editEqipment(shipment.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
+                          <v-btn @click="deleteEqipment(shipment.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
+                        </div>
+                      </div>
+                    </template>
+                  </v-col>  
+                  <!-- <v-col cols="12" md="6">
+                    <v-btn
+                      color="warning"
+                      variant="text"
+                      @click="resetValidation"
+                    >
+                      Очистить валидацию
+                    </v-btn>
+                  </v-col> -->
+                </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        </v-window-item>
+
+        <v-window-item value="inspection">
+          <v-card-text>
+            <v-container>
+            <v-row v-if="stage < 2">
+              <v-col cols="12">
+                <v-btn
+                  color="primary"
+                  variant="text"
+                  block
+                  @click="stage = 2"
+                >
+                  Начать этап
+                </v-btn>
+            </v-col>
+            </v-row>
+            <v-form ref="form2" v-if="stage > 1">
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="inspection.penalties"
+                      label="Штрафы"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                    v-model="inspection.payment"
+                      label="Оплата"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-select
+                    v-model="inspection.approved"
+                      :items="['Да', 'Нет']"
+                      label="Неодобрено"
+                    ></v-select>
+                  </v-col>
+                </v-row>
+            </v-form>
+          </v-container>
+          </v-card-text>
+        </v-window-item>
+      </v-window>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="blue-darken-1"
+          variant="text"
+          @click="closeTenderModal"
+        >
+          Закрыть
+        </v-btn>
+        <v-btn
+          color="primary"
+          @click="saveStage"
+        >
+          Сохранить
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </div>
+  <v-dialog v-model="dialogEquipment" width="55%">
+      <TenderEquipmentForm @saveEqip="saveCurrentEqipment" @close="closeEditEquipment" :item="currentEqipment"/>
+    </v-dialog>
+</template>
+
+<script>
+import formatToDate from '@/helpers/formatToDate'
+import formatFromDate from '@/helpers/formatFromDate'
+
+import TenderEquipmentForm from './TenderEquipmentForm.vue'
+
+export default {
+    components: { TenderEquipmentForm },
+
+    name: "tender-form",
+    props: {
+      tender: {
+        type: Object,
+        required: true
+      }
+    },
+
+    mounted() {
+      this.tab = this.tender.stage
+      this.stage = this.tender.tender.stage
+      this.contract.seller_name = this.tender.tender.contract_seller_name
+      this.contract.customer_name = this.tender.tender.contract_customer_name
+      this.contract.procuring.contract.amount = this.tender.tender.contract_procuring.contract.amount
+      this.contract.procuring.contract.date = formatToDate(this.tender.tender.contract_procuring.contract.date)
+      this.contract.procuring.guarantee.amount = this.tender.tender.contract_procuring.guarantee.amount
+      this.contract.procuring.guarantee.date = formatToDate(this.tender.tender.contract_procuring.guarantee.date)
+      this.contract.equipment = [...this.tender.tender.contract_equipment]
+      this.contract.number = this.tender.tender.contract_number
+      this.contract.date = formatToDate(this.tender.tender.contract_date)
+      this.contract.terms.date = formatToDate(this.tender.tender.contract_terms.date)
+      this.contract.terms.text = this.tender.tender.contract_terms.text
+      this.contract.addresses = this.tender.tender.contract_addresses.join(',')
+      this.contract.contacts = this.tender.tender.contract_contacts.join(',')
+      this.shipment.date = formatToDate(this.tender.tender.shipment_date)
+      this.shipment.equipment = [...this.tender.tender.shipment_equipment]
+      this.inspection.penalties = this.tender.tender.inspection_penalties
+      this.inspection.payment = this.tender.tender.inspection_payment
+      this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
+    },
+
+    data: () => ({
+      tab: 'contract',
+      dialogEquipment: false,
+      currentEqipment: {},
+      required: [
+          value => {
+              if (value)
+                  return true;
+              return "Заполните поле";
+          },
+      ],
+      stage: 0,
+      contract: {
+        seller_name: '',
+        customer_name: '',
+        procuring: {
+          contract: { amount: null, date: '' },
+          guarantee: { amount: null, date: '' },
+        },
+        equipment: [
+          {
+            name: '',
+            count: null,
+            price: null,
+            variation: '',
+          },
+          {
+            name: '',
+            count: null,
+            price: null,
+            variation: '',
+          }
+        ],
+        number: null,
+        date: '',
+        terms: {
+          date: null,
+          note: '',
+        },
+        addresses: [],
+        contacts: [],
+      },
+      shipment: {
+        date: new Date(1684516379 * 1000).toLocaleDateString("ru-RU"),
+        equipment: [
+          {
+            name: "equip0",
+            count: 2,
+            price: 3555.33,
+            variation: "variation3",
+          },
+          {
+            name: "equip1",
+            count: 22,
+            price: 345.33,
+            variation: "variation1",
+          }
+        ],
+      },
+      inspection: {
+        penalties: 123.32,
+        payment: 456.33,
+        approved: true,
+      },
+    }),
+
+    methods: {
+      closeTenderModal() {
+        this.$emit('close')
+      },
+      saveStage() {
+        this.$emit('save', {
+          id: this.tender.tender.id,
+          stage: this.stage,
+          contract: {
+            seller_name: this.contract.seller_name,
+            customer_name: this.contract.customer_name,
+            procuring: {
+              contract: { 
+                amount: this.contract.procuring.contract.amount,
+                date: formatFromDate(this.contract.procuring.contract.date)
+                },
+              guarantee: { 
+                amount: this.contract.procuring.guarantee.amount,
+                date: formatFromDate(this.contract.procuring.guarantee.date)
+              }
+            },
+            equipment: this.contract.equipment,
+            number: Number(this.contract.number),
+            date: formatFromDate(this.contract.date),
+            terms: {
+              date: formatFromDate(this.contract.terms.date),
+              note: this.contract.terms.note,
+            },
+            addresses: this.contract.addresses.split(','),
+            contacts: this.contract.contacts.split(','),
+          },
+          shipment: {
+            date: formatFromDate(this.shipment.date),
+            equipment: this.shipment.equipment
+          },
+          inspection: {
+            penalties: Number(this.inspection.penalties),
+            payment: Number(this.inspection.payment),
+            approved: this.inspection.approved === 'Да' ? true : false,
+          },
+        })
+      },
+      closeEditEquipment() {
+        this.dialogEquipment = false
+      },
+      addEquipment() {
+        this[this.tab].equipment.push({name: 'new', price: '', count: '', variation: ''})
+      },
+      deleteEqipment(index) {
+        this[this.tab].equipment.splice(index, 1)
+        console.log('удалить', index)
+        console.log(this[this.tab].equipment)
+      },
+      editEqipment(index, item) {
+        this.currentEqipment = {
+          index: index,
+          ...item
+        }
+        this.dialogEquipment = true
+      },
+      saveCurrentEqipment(item) {
+        this[this.tab].equipment[item.id] = item.value
+        this.dialogEquipment = false
+      }
+    }
+}
+</script>
+
+<style scoped>
+
+</style>
