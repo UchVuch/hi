@@ -3,12 +3,21 @@
     <div class="table mr-16">
       <div class="table__title d-flex justify-space-between">
         <h2 class="text-h4 mb-8">Тендеры</h2>
-        <v-btn 
-          v-if="!isTableEdit"
-          @click="startEditTable"
-        >
-          Редактировать
-        </v-btn>
+        <div>
+          <v-btn 
+            @click="openNewTenderModal"
+            class="mr-5"
+            color="primary"
+          >
+            Добавить тендер
+          </v-btn>
+          <v-btn 
+            v-if="!isTableEdit"
+            @click="startEditTable"
+          >
+            Редактировать
+          </v-btn>
+        </div>
       </div>
       <v-table fixed-header>
       <thead>
@@ -19,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in sortedRows">
+        <tr v-for="row in sortedRows" :key="row.id">
           <td
             v-for="item in selectedColumns"
             :key="item.name"
@@ -31,6 +40,13 @@
         </tr>
       </tbody>
       </v-table>
+      <ul class="posts__pagination">
+        <li class="posts__pagination-item" v-for="pageNumber in totalPages" :key="pageNumber">
+          <button :class="{ 'current-page': pageNumber === page }" @click="changePage(pageNumber)">
+            {{ pageNumber }}
+          </button>
+        </li>
+      </ul>
     </div>
     <div class="edit-table ml-16">
     <div class="edit-table__content" v-if="isTableEdit">
@@ -80,6 +96,8 @@
 </template>
 
 <script>
+import { setSettingsTable, getSettingsTable } from "@/api"
+
 import formatToDate from '@/helpers/formatToDate'
 
 import Draggable  from "vue3-draggable"
@@ -92,21 +110,29 @@ export default {
     tenders: {
       type: Object, 
       required: true
+    },
+    totalPages: {
+      type: Number,
+      required: true
+    },
+    page: {
+      type: Number,
+      required: true
     }
   },
 
-  mounted() {
-    this.rows = this.tenders
-    this.selectColumnsNames()
+  async mounted() {
+    // получаем настройки таблицы с сервера и после обновляем рендер таблицы
+    this.settingsTable = await getSettingsTable()
+    this.setSelectColumnsNames()
   },
   data: () => ({
     isTableEdit: false,
     selectedColumns: [],
     selectedColumnsNames: [],
     sortedRows: [],
-    rows: [
-      
-    ],
+    // settingsTable: [],
+    // стандартные настройки
     settingsTable: [
       {
         name: 'contract_seller_name',
@@ -194,12 +220,28 @@ export default {
       },
     ],
   }),
+  computed: {
+    rows() {
+      return [...this.tenders]
+    }
+  },
+  watch: {
+    rows() {
+      this.sortRows()
+    }
+  },
   methods: {
+    changePage(pageNumber) {
+      this.$emit('change', pageNumber)
+    },
     openTenderModal(stage, tender) {
-      this.$emit('show', {
+      this.$emit('editTender', {
         stage: stage,
         tender: {...tender}
       })
+    },
+    openNewTenderModal() {
+      this.$emit('createTender')
     },
     startEditTable() {
       this.isTableEdit = true
@@ -254,13 +296,17 @@ export default {
       // console.log(newArr)
       // return newArr
     },
-    selectColumnsNames() {
+    setSelectColumnsNames() {
       this.selectedColumnsNames = this.settingsTable.filter(row => !row.hidden).map(row => row.name)
-      this.sortRows()
       this.selectColumns()
+      this.sortRows()
     },
-    resetValidation() {
-      this.$refs.form1.resetValidation()
+    async selectColumnsNames() {
+      // тут подставить метод по отправке настроек на сервер
+      await setSettingsTable(this.settingsTable)
+      // обновляем настройки
+      this.settingsTable = await getSettingsTable()
+      this.setSelectColumnsNames()
     },
     columnHidden(name) {
       const column = this.settingsTable.find(item => item.name === name)
@@ -312,6 +358,32 @@ export default {
 </script>
 
 <style scoped>
+.posts__pagination {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.posts__pagination-item button {
+  border: 1px solid rgb(182, 182, 182);
+  border-radius: 5px;
+  color: #000;
+  background-color: #fff;
+  width: 38px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.current-page {
+  border: 2px solid #3b3b3b !important;
+}
 .edit-table {
   max-width: 300px;
 }

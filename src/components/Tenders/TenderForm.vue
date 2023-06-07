@@ -2,7 +2,8 @@
   <div>
     <v-card style="overflow-y: auto;">
     <v-card-title>
-      <span class="text-h5">Тендер</span>
+      <span class="text-h5" v-if="isNewTender">Новый тендер</span>
+      <span class="text-h5" v-else>Тендер</span>
     </v-card-title>
     <v-tabs v-model="tab" fixed-tabs>
       <v-tab value="contract"> <v-icon class="mr-2" size="large" icon="mdi-check-circle" title="Этап активен" color="green"></v-icon> Подписание</v-tab>
@@ -31,19 +32,22 @@
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-text-field
-                    v-model="contract.customer_name"
+                      v-model="contract.customer_name"
                       label="Имя клиента"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-text-field
-                    v-model="contract.number"
+                      v-model="contract.number"
                       label="Число"
+                      hint="Десятичные значения указываются через точку, например 350.05"
+                      persistent-hint
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-text-field
-                    v-model="contract.date"
+                      v-model="contract.date"
+                      :rules="isValidDate"
                       label="Дата"
                       hint="Дата в формате дд.мм.гггг — 02.06.2023"
                       persistent-hint
@@ -54,7 +58,8 @@
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
-                        v-model="contract.terms.date"
+                          v-model="contract.terms.date"
+                          :rules="isValidDate"
                           label="Дата"
                           hint="Дата в формате дд.мм.гггг — 02.06.2023"
                           persistent-hint
@@ -80,6 +85,7 @@
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.procuring.contract.date"
+                          :rules="isValidDate"
                           label="Дата"
                           hint="Дата в формате дд.мм.гггг — 02.06.2023"
                           persistent-hint
@@ -94,11 +100,14 @@
                         <v-text-field
                           v-model="contract.procuring.guarantee.amount"
                           label="Сумма"
+                          hint="Десятичные значения указываются через точку, например 350.05"
+                          persistent-hint
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.procuring.guarantee.date"
+                          :rules="isValidDate"
                           label="Дата"
                           hint="Дата в формате дд.мм.гггг — 02.06.2023"
                           persistent-hint
@@ -144,19 +153,9 @@
                       </div>
                     </template>
                   </v-col>
-                  <!-- <v-col cols="12" md="6">
-                    <v-btn
-                      color="warning"
-                      variant="text"
-                      @click="resetValidation"
-                    >
-                      Очистить валидацию
-                    </v-btn>
-                  </v-col> -->
                 </v-row>
               </v-form>
             </v-container>
-          <small>* — заполните для перехода к следующему этапу</small>
           </v-card-text>
         </v-window-item>
 
@@ -180,6 +179,7 @@
                   <v-col cols="12">
                     <v-text-field
                       v-model="shipment.date"
+                      :rules="isValidDate"
                       label="Дата"
                       hint="Дата в формате дд.мм.гггг — 02.06.2023"
                       persistent-hint
@@ -202,15 +202,6 @@
                       </div>
                     </template>
                   </v-col>  
-                  <!-- <v-col cols="12" md="6">
-                    <v-btn
-                      color="warning"
-                      variant="text"
-                      @click="resetValidation"
-                    >
-                      Очистить валидацию
-                    </v-btn>
-                  </v-col> -->
                 </v-row>
             </v-form>
           </v-container>
@@ -238,17 +229,21 @@
                     <v-text-field
                       v-model="inspection.penalties"
                       label="Штрафы"
+                      hint="Десятичные значения указываются через точку, например 350.05"
+                      persistent-hint
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-text-field
-                    v-model="inspection.payment"
+                      v-model="inspection.payment"
                       label="Оплата"
+                      hint="Десятичные значения указываются через точку, например 350.05"
+                      persistent-hint
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-select
-                    v-model="inspection.approved"
+                      v-model="inspection.approved"
                       :items="['Да', 'Нет']"
                       label="Неодобрено"
                     ></v-select>
@@ -271,9 +266,17 @@
         <v-btn
           color="primary"
           @click="saveStage"
+          v-if="isNewTender"
         >
-          Сохранить
+          Создать
         </v-btn>
+        <v-btn
+          color="primary"
+          @click="saveStage"
+          v-else
+        > 
+        Сохранить
+      </v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -283,6 +286,7 @@
 </template>
 
 <script>
+import validateDate from '@/helpers/validateDate'
 import formatToDate from '@/helpers/formatToDate'
 import formatFromDate from '@/helpers/formatFromDate'
 
@@ -300,32 +304,44 @@ export default {
     },
 
     mounted() {
-      this.tab = this.tender.stage
-      this.stage = this.tender.tender.stage
-      this.contract.seller_name = this.tender.tender.contract_seller_name
-      this.contract.customer_name = this.tender.tender.contract_customer_name
-      this.contract.procuring.contract.amount = this.tender.tender.contract_procuring.contract.amount
-      this.contract.procuring.contract.date = formatToDate(this.tender.tender.contract_procuring.contract.date)
-      this.contract.procuring.guarantee.amount = this.tender.tender.contract_procuring.guarantee.amount
-      this.contract.procuring.guarantee.date = formatToDate(this.tender.tender.contract_procuring.guarantee.date)
-      this.contract.equipment = [...this.tender.tender.contract_equipment]
-      this.contract.number = this.tender.tender.contract_number
-      this.contract.date = formatToDate(this.tender.tender.contract_date)
-      this.contract.terms.date = formatToDate(this.tender.tender.contract_terms.date)
-      this.contract.terms.text = this.tender.tender.contract_terms.text
-      this.contract.addresses = this.tender.tender.contract_addresses.join(',')
-      this.contract.contacts = this.tender.tender.contract_contacts.join(',')
-      this.shipment.date = formatToDate(this.tender.tender.shipment_date)
-      this.shipment.equipment = [...this.tender.tender.shipment_equipment]
-      this.inspection.penalties = this.tender.tender.inspection_penalties
-      this.inspection.payment = this.tender.tender.inspection_payment
-      this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
+      if (Object.keys(this.tender).length > 0) {
+        this.tab = this.tender.stage
+        this.id = this.tender.tender.id
+        this.stage = this.tender.tender.stage
+        this.contract.seller_name = this.tender.tender.contract_seller_name
+        this.contract.customer_name = this.tender.tender.contract_customer_name
+        this.contract.procuring.contract.amount = this.tender.tender.contract_procuring.contract.amount
+        this.contract.procuring.contract.date = formatToDate(this.tender.tender.contract_procuring.contract.date)
+        this.contract.procuring.guarantee.amount = this.tender.tender.contract_procuring.guarantee.amount
+        this.contract.procuring.guarantee.date = formatToDate(this.tender.tender.contract_procuring.guarantee.date)
+        this.contract.equipment = [...this.tender.tender.contract_equipment]
+        this.contract.number = this.tender.tender.contract_number
+        this.contract.date = formatToDate(this.tender.tender.contract_date)
+        this.contract.terms.date = formatToDate(this.tender.tender.contract_terms.date)
+        this.contract.terms.text = this.tender.tender.contract_terms.text
+        this.contract.addresses = this.tender.tender.contract_addresses.join(',')
+        this.contract.contacts = this.tender.tender.contract_contacts.join(',')
+        this.shipment.date = formatToDate(this.tender.tender.shipment_date)
+        this.shipment.equipment = [...this.tender.tender.shipment_equipment]
+        this.inspection.penalties = this.tender.tender.inspection_penalties
+        this.inspection.payment = this.tender.tender.inspection_payment
+        this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
+      } else {
+        this.isNewTender = true
+        this.id = Date.now()
+      }
     },
 
     data: () => ({
+      isNewTender: false,
       tab: 'contract',
       dialogEquipment: false,
       currentEqipment: {},
+      isValidDate: [
+        value => {
+          return validateDate(value)
+        }
+      ],
       required: [
           value => {
               if (value)
@@ -333,6 +349,7 @@ export default {
               return "Заполните поле";
           },
       ],
+      id: null,
       stage: 0,
       contract: {
         seller_name: '',
@@ -341,50 +358,24 @@ export default {
           contract: { amount: null, date: '' },
           guarantee: { amount: null, date: '' },
         },
-        equipment: [
-          {
-            name: '',
-            count: null,
-            price: null,
-            variation: '',
-          },
-          {
-            name: '',
-            count: null,
-            price: null,
-            variation: '',
-          }
-        ],
+        equipment: [],
         number: null,
         date: '',
         terms: {
           date: null,
           note: '',
         },
-        addresses: [],
-        contacts: [],
+        addresses: '',
+        contacts: '',
       },
       shipment: {
-        date: new Date(1684516379 * 1000).toLocaleDateString("ru-RU"),
-        equipment: [
-          {
-            name: "equip0",
-            count: 2,
-            price: 3555.33,
-            variation: "variation3",
-          },
-          {
-            name: "equip1",
-            count: 22,
-            price: 345.33,
-            variation: "variation1",
-          }
-        ],
+        date: '',
+        equipment: [],
       },
       inspection: {
-        penalties: 123.32,
-        payment: 456.33,
-        approved: true,
+        penalties: null,
+        payment: null,
+        approved: 'Нет',
       },
     }),
 
@@ -393,8 +384,8 @@ export default {
         this.$emit('close')
       },
       saveStage() {
-        this.$emit('save', {
-          id: this.tender.tender.id,
+        const tender = {
+          id: this.id,
           stage: this.stage,
           contract: {
             seller_name: this.contract.seller_name,
@@ -424,11 +415,16 @@ export default {
             equipment: this.shipment.equipment
           },
           inspection: {
-            penalties: Number(this.inspection.penalties),
-            payment: Number(this.inspection.payment),
+            penalties: this.inspection.penalties ? Number(this.inspection.penalties) : this.inspection.penalties,
+            payment: this.inspection.payment ? Number(this.inspection.payment) : this.inspection.payment,
             approved: this.inspection.approved === 'Да' ? true : false,
           },
-        })
+        }
+        if (this.isNewTender) {
+          this.$emit('create', tender)
+        } else {
+          this.$emit('save', tender)
+        }
       },
       closeEditEquipment() {
         this.dialogEquipment = false

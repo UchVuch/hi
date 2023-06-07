@@ -4,6 +4,7 @@
       <v-form ref="authForm">
         <h2 class="text-h4 mb-5">Авторизация</h2>
         <v-text-field
+          v-model="username"
           label="Введите логин"
           :rules="rules"
           hide-details="auto"
@@ -11,6 +12,7 @@
           class="mb-6"
         />
         <v-text-field
+          v-model="password"
           label="Введите пароль"
           :rules="rules"
           hide-details="auto"
@@ -21,7 +23,7 @@
         <v-btn 
           block
           color="primary py-6 d-flex"
-          @click="login"
+          @click="postLogin"
         >
           Войти
         </v-btn>
@@ -31,25 +33,62 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia';
-import {useAuthStore} from '@/plugins/store/auth';
+import { login } from '../api'
+import { mapActions } from 'pinia'
+import {useAuthStore} from '@/plugins/store/auth'
 
 export default {
+
+  async created() {
+    if (localStorage.getItem('username') && localStorage.getItem('password')) {
+
+      const user = {
+        username: localStorage.getItem('username'),
+        password: localStorage.getItem('password')
+      }
+      // если авторизация успешна переходим на основную страницу
+      const status = await login(user)
+      console.log(status)
+      if (status) {
+        this.authLogin()
+        this.$router.push('/home')
+      } else {
+        console.log('Ошибка')
+      }
+
+    } else {
+      return
+    }
+  },
 
   data: () => ({
     rules: [
       value => !!value || 'Заполните поле ввода' 
     ],
+    username: '',
+    password: ''
   }),
 
   methods: {
     ...mapActions(useAuthStore, ['authLogin']),
-    async login() {
+
+    async postLogin() {
       const { valid } = await this.$refs.authForm.validate()
       
       if (valid) {
-        this.authLogin()
-        this.$router.push('/home')
+        const user = {
+          username: this.username,
+          password: this.password
+        }
+        // если авторизация успешна переходим на основную страницу
+        const status = await login(user)
+        console.log(status)
+        if (status) {
+          this.authLogin()
+          this.$router.push('/home')
+        } else {
+          console.log('Ошибка')
+        }
       }    
     }
   }

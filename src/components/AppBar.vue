@@ -12,12 +12,13 @@
 
         <v-spacer></v-spacer>
 
-      <v-btn icon @click="logout">
+      <v-btn icon @click="getLogout">
         <v-icon>mdi-logout</v-icon>
       </v-btn>
     </v-app-bar>
 </template>
 <script>
+import { logout } from '../api'
 import { mapActions, mapState } from 'pinia';
 import { useAuthStore } from '@/plugins/store/auth';
 
@@ -34,7 +35,8 @@ export default {
 
   methods: {
     ...mapActions(useAuthStore, ['authLogout']),
-    logout() {
+    async getLogout() {
+      await logout()
       this.authLogout()
       this.$router.push('/')
     },

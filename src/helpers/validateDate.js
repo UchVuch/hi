@@ -4,10 +4,10 @@ export default function (date) {
   // First check for the pattern
   if(!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString))
   {
-    console.log(false)
+    // console.log(false)
     return 'Введите корректную дату'
   } else {
-    console.log(true)
+    // console.log(true)
   }
 
   // Parse the date parts to integers
@@ -35,7 +35,7 @@ export default function (date) {
   if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) monthLength[1] = 29;
   // Check the range of the day
   if (day > 0 && day <= monthLength[month - 1]) {
-    console.log(true)
+    // console.log(true)
     return day > 0 && day <= monthLength[month - 1]
   } else {
     return 'Введите корректный день дд, , например 01'
