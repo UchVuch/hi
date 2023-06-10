@@ -7,7 +7,7 @@ export async function getTenders(start, length) {
   }
   const data = await res.json()
   // внутри data ожидаю поле с общим количеством тендеров totalTenders и поле data с объектом тендеров 
-  return data
+  return {records_total: 20, records_filtered: 20, data: []}
 }
 
 export async function putTender(tender, id) {
@@ -47,9 +47,9 @@ export async function login(user) {
     body:JSON.stringify(user),
   }).catch((error) => ("Something went wrong!", error))
 
-  if( res.status >= 400 ) {
-    return false
-  }
+  // if( res.status >= 400 ) {
+  //   return false
+  // }
 
   localStorage.setItem('username', user.username)
   localStorage.setItem('password', user.password)

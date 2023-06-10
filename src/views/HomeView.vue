@@ -12,7 +12,7 @@
       </v-alert>
     </div>
 
-    <v-dialog v-model="tenderModal" width="1366" height="839">
+    <v-dialog v-model="tenderModal">
       <TenderForm @close="tenderModal = false" @save="saveTender" @create="createTender" :tender="currentTender"/>
     </v-dialog>
   </div>
@@ -28,7 +28,7 @@ import TenderEquipmentForm from "../components/Tenders/TenderEquipmentForm.vue"
 export default {
   components: { TendersTable, TenderForm, TenderEquipmentForm },
   async created() {
-    await this.getCurrentTenders()
+    // await this.getCurrentTenders()
     console.log(this.tenders)
   },
   data: () => ({
@@ -37,122 +37,123 @@ export default {
     start: 0,
     length: 10,
     page: 1,
-    totalPages: 20,
+    totalPages: 0,
     currentTender: {},
-    tenders: [],
+    // tenders: [],
     // моковые тендеры
-    // tenders: [
-    // {
-    //     id: 1,
-    //     stage: 2,
-    //     contract:{
-    //       seller_name: 'name1',
-    //       customer_name: 'name2',
-    //       procuring:{
-    //       contract:{amount:null,date:1674651234},
-    //       guarantee:{amount:3452.43,date:null},
-    //       },
-    //       equipment:[
-    //       {
-    //       name:"equip0",
-    //       count:2,
-    //       price:3555.33,
-    //       variation:"variation3",
-    //       },
-    //       {
-    //       name:"equip1",
-    //       count:22,
-    //       price:345.33,
-    //       variation:"variation1",
-    //       }
-    //     ],
-    //       number:431,
-    //       date:1684454400,
-    //       terms:{
-    //       date:1684454400,
-    //       note:"text",
-    //       },
-    //       addresses:["123","456"],
-    //       contacts:["1234","1234"],
-    //     },
-    //     shipment:{
-    //       date:1684516379,
-    //       equipment:[
-    //       {
-    //       name:"equip00",
-    //       count:2,
-    //       price:3555.33,
-    //       variation:"variation3",
-    //       },
-    //       {
-    //       name:"equip11",
-    //       count:22,
-    //       price:345.33,
-    //       variation:"variation1",
-    //       }
-    //     ],
-    //     },
-    //     inspection:{
-    //       penalties:123.32,
-    //       payment:456.33,
-    //       approved:true,
-    //     }
-    //   },
-    //   {
-    //     id: 2,
-    //     stage: 1,
-    //     contract:{
-    //       seller_name:"",
-    //       customer_name:"name4",
-    //       procuring:{
-    //       contract:{amount:3452.43,date:1684514371},
-    //       guarantee:{amount:3452.43,date:1684514371},
-    //       },
-    //       equipment:[
-    //       {
-    //       name:"equip2",
-    //       count:2,
-    //       price:3555.33,
-    //       variation:"variation3",
-    //       },
-    //       {
-    //       name:"equip3",
-    //       count:22,
-    //       price:345.33,
-    //       variation:"variation1",
-    //       }],
-    //       number:431,
-    //       date:1684514371,
-    //       terms:{
-    //       date: null,
-    //       note:"Ещё не назначена",
-    //       },
-    //       addresses:["123","456"],
-    //       contacts:["1234","1234"],
-    //     },
-    //     shipment:{
-    //       date:1684516379,
-    //       equipment:[
-    //       {
-    //       name:"equip03",
-    //       count:2,
-    //       price:3555.33,
-    //       variation:"variation3",
-    //       },
-    //       {
-    //       name:"equip13",
-    //       count:22,
-    //       price:345.33,
-    //       variation:"variation1",
-    //       }],
-    //     },
-    //     inspection:{
-    //       penalties:0,
-    //       payment:200,
-    //       approved:false,
-    //     }
-    //   },
-    // ],
+    tenders: [
+    {
+        id: 1,
+        stage: 2,
+        contract:{
+          seller_name: 'name1',
+          customer_name: 'name2',
+          procuring:{
+          contract:{amount:null,date:1674651234},
+          guarantee:{amount:3452.43,date:null},
+          },
+          equipment:[
+          {
+          name:"equip0",
+          count:2,
+          price:3555.33,
+          variation:"variation3",
+          },
+          {
+          name:"equip1",
+          count:22,
+          price:345.33,
+          variation:"variation1",
+          }
+        ],
+          number:431,
+          date:1684454400,
+          terms:{
+          date:1684454400,
+          note:"text",
+          },
+          addresses:["123","456"],
+          contacts:["1234","1234"],
+        },
+        shipment:{
+          date:1684516379,
+          equipment:[
+          {
+          name:"equip00",
+          count:2,
+          price:3555.33,
+          variation:"variation3",
+          },
+          {
+          name:"equip11",
+          count:22,
+          price:345.33,
+          variation:"variation1",
+          }
+        ],
+        },
+        inspection:{
+          penalties:123.32,
+          payment:456.33,
+          approved:true,
+        }
+      },
+      {
+        id: 2,
+        stage: 1,
+        contract:{
+          seller_name:"",
+          customer_name:"name4",
+          procuring:{
+          contract:{amount:3452.43,date:1684514371},
+          guarantee:{amount:3452.43,date:1684514371},
+          },
+          equipment:[
+          {
+          name:"equip2",
+          count:2,
+          price:3555.33,
+          variation:"variation3",
+          },
+          {
+          name:"equip3",
+          count:22,
+          price:345.33,
+          variation:"variation1",
+          }],
+          number:431,
+          date:1684514371,
+          terms:{
+          date: null,
+          note:"Ещё не назначена",
+          },
+          addresses:["123","456"],
+          contacts:["1234","1234"],
+        },
+        shipment:{
+          date:1684516379,
+          equipment:[
+          {
+          name:"equip03",
+          count:2,
+          price:3555.33,
+          variation:"variation3",
+          },
+          {
+          name:"equip13",
+          count:22,
+          price:345.33,
+          variation:"variation1",
+          }],
+        },
+        inspection: null
+        // inspection:{
+        //   penalties:0,
+        //   payment:200,
+        //   approved:false,
+        // }
+      },
+    ],
   }),
 
   computed: {
@@ -188,7 +189,7 @@ export default {
       this.tenderModal = false
     },
     async getCurrentTenders() {
-      const { totalTenders, data } = await getTenders(this.start, this.length)
+      const { records_total = totalTenders, records_filtered, data } = await getTenders(this.start, this.length)
       this.totalPages = totalTenders / this.length
       this.tenders = [...data]
     },

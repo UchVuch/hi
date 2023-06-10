@@ -28,7 +28,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in sortedRows" :key="row.id">
+        <tr class="tenders-none" v-if="!rows.length">Тендеров нет</tr>
+        <tr v-for="row in sortedRows" :key="row.id" v-else>
           <td
             v-for="item in selectedColumns"
             :key="item.name"
@@ -123,7 +124,9 @@ export default {
 
   async mounted() {
     // получаем настройки таблицы с сервера и после обновляем рендер таблицы
-    this.settingsTable = await getSettingsTable()
+    // const settingsData = await getSettingsTable()
+    const settingsData = null
+    settingsData ? this.settingsTable = settingsData : '' 
     this.setSelectColumnsNames()
   },
   data: () => ({
@@ -265,19 +268,21 @@ export default {
         // contract{}, shipment{}, inspection{}
         const stageObg = Object.keys(row)
           .forEach(stage => {
-            const stageObj = Object.keys(row[stage])
-              .reduce((obj, key) => {
-                const objKey = `${stage}_${key}`
-                if (columns.includes(objKey)) {
-                  obj[objKey] = row[stage][key]
+            if (row[stage]) {
+              const stageObj = Object.keys(row[stage])
+                .reduce((obj, key) => {
+                  const objKey = `${stage}_${key}`
+                  if (columns.includes(objKey)) {
+                    obj[objKey] = row[stage][key]
+                  }
+                  return obj
+                }, {})
+                fullObj = {
+                  ...fullObj,
+                  ...stageObj
                 }
-                return obj
-              }, {})
-              fullObj = {
-                ...fullObj,
-                ...stageObj
-              }
-              // console.log(fullObj)
+                // console.log(fullObj)
+            }
           })
         newArr.push(fullObj)
       })
@@ -389,7 +394,16 @@ export default {
 }
 .table {
   max-width: 1100px;
+  min-width: 380px;
   overflow-x: auto;
+}
+
+.tenders-none {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 tbody tr:hover {

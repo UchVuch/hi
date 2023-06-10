@@ -18,7 +18,7 @@
         Приемка
       </v-tab>
     </v-tabs>
-    <v-window v-model="tab" style="overflow-y: auto; height: 691px;">
+    <v-window v-model="tab" style="overflow-y: auto; height: 75vh;">
         <v-window-item value="contract">
           <v-card-text>
             <v-container>
@@ -305,9 +305,10 @@ export default {
 
     mounted() {
       if (Object.keys(this.tender).length > 0) {
+
         this.tab = this.tender.stage
         this.id = this.tender.tender.id
-        this.stage = this.tender.tender.stage
+
         this.contract.seller_name = this.tender.tender.contract_seller_name
         this.contract.customer_name = this.tender.tender.contract_customer_name
         this.contract.procuring.contract.amount = this.tender.tender.contract_procuring.contract.amount
@@ -321,14 +322,26 @@ export default {
         this.contract.terms.text = this.tender.tender.contract_terms.text
         this.contract.addresses = this.tender.tender.contract_addresses.join(',')
         this.contract.contacts = this.tender.tender.contract_contacts.join(',')
-        this.shipment.date = formatToDate(this.tender.tender.shipment_date)
-        this.shipment.equipment = [...this.tender.tender.shipment_equipment]
-        this.inspection.penalties = this.tender.tender.inspection_penalties
-        this.inspection.payment = this.tender.tender.inspection_payment
-        this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
+
+        if (this.tender.tender.shipment_date) {
+          this.shipment.date = formatToDate(this.tender.tender.shipment_date)
+          this.shipment.equipment = [...this.tender.tender.shipment_equipment]
+        } else {
+          this.stage = 0
+        }
+
+        if (this.tender.tender.inspection_penalties) {
+          this.inspection.penalties = this.tender.tender.inspection_penalties
+          this.inspection.payment = this.tender.tender.inspection_payment
+          this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
+        } else {
+          this.stage = 1
+        }
+
       } else {
         this.isNewTender = true
         this.id = Date.now()
+        this.stage = 0
       }
     },
 
@@ -350,7 +363,7 @@ export default {
           },
       ],
       id: null,
-      stage: 0,
+      stage: 2,
       contract: {
         seller_name: '',
         customer_name: '',
@@ -386,7 +399,6 @@ export default {
       saveStage() {
         const tender = {
           id: this.id,
-          stage: this.stage,
           contract: {
             seller_name: this.contract.seller_name,
             customer_name: this.contract.customer_name,
@@ -410,11 +422,12 @@ export default {
             addresses: this.contract.addresses.split(','),
             contacts: this.contract.contacts.split(','),
           },
-          shipment: {
+          
+          shipment: this.stage < 1 ? null : {
             date: formatFromDate(this.shipment.date),
             equipment: this.shipment.equipment
           },
-          inspection: {
+          inspection: this.stage < 2 ? null : {
             penalties: this.inspection.penalties ? Number(this.inspection.penalties) : this.inspection.penalties,
             payment: this.inspection.payment ? Number(this.inspection.payment) : this.inspection.payment,
             approved: this.inspection.approved === 'Да' ? true : false,
