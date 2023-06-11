@@ -116,21 +116,19 @@
                     </v-row>
                   </v-col>
                   <v-col cols="12">
-                    <p>Адреса и контакты</p>
+                    <p>Адреc и контакт</p>
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.addresses"
-                          label="Адреса"
-                          hint="Укажите адреса через запятую"
+                          label="Адрес"
                           persistent-hint
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.contacts"
-                          label="Контакты"
-                          hint="Укажите контакты через запятую"
+                          label="Контакт"
                           persistent-hint
                         ></v-text-field>
                       </v-col>
@@ -279,14 +277,16 @@
       </v-btn>
       </v-card-actions>
     </v-card>
-  </div>
-  <v-dialog v-model="dialogEquipment" width="55%">
-      <TenderEquipmentForm @saveEqip="saveCurrentEqipment" @close="closeEditEquipment" :item="currentEqipment"/>
+  
+    <v-dialog v-model="dialogEquipment" width="55%">
+        <TenderEquipmentForm @saveEqip="saveCurrentEqipment" @close="closeEditEquipment" :item="currentEqipment"/>
     </v-dialog>
+  </div>
 </template>
 
 <script>
 import validateDate from '@/helpers/validateDate'
+import currentDate from '@/helpers/currentDate'
 import formatToDate from '@/helpers/formatToDate'
 import formatFromDate from '@/helpers/formatFromDate'
 
@@ -302,6 +302,7 @@ export default {
         required: true
       }
     },
+    emits: ['close', 'save', 'create'],
 
     mounted() {
       if (Object.keys(this.tender).length > 0) {
@@ -320,8 +321,8 @@ export default {
         this.contract.date = formatToDate(this.tender.tender.contract_date)
         this.contract.terms.date = formatToDate(this.tender.tender.contract_terms.date)
         this.contract.terms.text = this.tender.tender.contract_terms.text
-        this.contract.addresses = this.tender.tender.contract_addresses.join(',')
-        this.contract.contacts = this.tender.tender.contract_contacts.join(',')
+        this.contract.addresses = this.tender.tender.contract_addresses
+        this.contract.contacts = this.tender.tender.contract_contacts
 
         if (this.tender.tender.shipment_date) {
           this.shipment.date = formatToDate(this.tender.tender.shipment_date)
@@ -368,26 +369,26 @@ export default {
         seller_name: '',
         customer_name: '',
         procuring: {
-          contract: { amount: null, date: '' },
-          guarantee: { amount: null, date: '' },
+          contract: { amount: 0, date:  formatToDate( currentDate() ) },
+          guarantee: { amount: 0, date: formatToDate( currentDate() ) },
         },
         equipment: [],
-        number: null,
-        date: '',
+        number: 0,
+        date: formatToDate( currentDate() ),
         terms: {
-          date: null,
+          date: formatToDate( currentDate() ),
           note: '',
         },
         addresses: '',
         contacts: '',
       },
       shipment: {
-        date: '',
+        date: formatToDate( currentDate() ),
         equipment: [],
       },
       inspection: {
-        penalties: null,
-        payment: null,
+        penalties: 0,
+        payment: 0,
         approved: 'Нет',
       },
     }),
@@ -395,6 +396,15 @@ export default {
     methods: {
       closeTenderModal() {
         this.$emit('close')
+      },
+      formatTypeEquipment(array) {
+        return array.map(item => {
+          return {
+            ...item,
+            count: Number(item.count),
+            price: Number(item.price),
+          }
+        })
       },
       saveStage() {
         const tender = {
@@ -412,24 +422,24 @@ export default {
                 date: formatFromDate(this.contract.procuring.guarantee.date)
               }
             },
-            equipment: this.contract.equipment,
+            equipment: this.formatTypeEquipment(this.contract.equipment),
             number: Number(this.contract.number),
             date: formatFromDate(this.contract.date),
             terms: {
               date: formatFromDate(this.contract.terms.date),
               note: this.contract.terms.note,
             },
-            addresses: this.contract.addresses.split(','),
-            contacts: this.contract.contacts.split(','),
+            addresses: this.contract.addresses,
+            contacts: this.contract.contacts
           },
           
           shipment: this.stage < 1 ? null : {
             date: formatFromDate(this.shipment.date),
-            equipment: this.shipment.equipment
+            equipment: this.formatTypeEquipment(this.shipment.equipment)
           },
           inspection: this.stage < 2 ? null : {
-            penalties: this.inspection.penalties ? Number(this.inspection.penalties) : this.inspection.penalties,
-            payment: this.inspection.payment ? Number(this.inspection.payment) : this.inspection.payment,
+            penalties: Number(this.inspection.penalties),
+            payment: Number(this.inspection.payment),
             approved: this.inspection.approved === 'Да' ? true : false,
           },
         }

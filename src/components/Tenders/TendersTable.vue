@@ -50,49 +50,49 @@
       </ul>
     </div>
     <div class="edit-table ml-16">
-    <div class="edit-table__content" v-if="isTableEdit">
-      <!-- <v-btn class="w-100" @click="cancelEditTable">Отменить изменения</v-btn> -->
-      <v-row class="mt-2">
-        <v-col cols="5">
-          <v-btn @click="endEditTable">Назад</v-btn>
-        </v-col>
-        <v-col cols="7">
-          <v-btn color="primary w-100" @click="selectColumnsNames">Сохранить</v-btn>
-        </v-col>
-      </v-row>
-      <v-card
-        class="mx-auto mt-8 pa-3"
-        min-width="200"
-      >
-        <h3 class="text-h6">Столбцы</h3>
-        <draggable v-model="settingsTable">
-            <template v-slot:item="{item}">
-              <div class="d-flex align-center mb-2" style="cursor: grab;">
-                <div class="mr-4">
-                  <v-btn
-                    v-if="item.hidden"
-                    title="Скрыт"
-                    @click="columnHidden(item.name)"
-                  >
-                    <v-icon icon="mdi-eye-off" size="large"></v-icon>
-                  </v-btn>
-                  <v-btn
-                    v-else
-                    title="Активен"
-                    @click="columnHidden(item.name)"
-                  >
-                    <v-icon icon="mdi-eye" size="large"></v-icon>
-                  </v-btn>
+      <div class="edit-table__content" v-if="isTableEdit">
+        <!-- <v-btn class="w-100" @click="cancelEditTable">Отменить изменения</v-btn> -->
+        <v-row class="mt-2">
+          <v-col cols="5">
+            <v-btn @click="endEditTable">Назад</v-btn>
+          </v-col>
+          <v-col cols="7">
+            <v-btn color="primary w-100" @click="selectColumnsNames">Сохранить</v-btn>
+          </v-col>
+        </v-row>
+        <v-card
+          class="mx-auto mt-8 pa-3"
+          min-width="200"
+        >
+          <h3 class="text-h6">Столбцы</h3>
+          <draggable v-model="settingsTable">
+              <template v-slot:item="{item}">
+                <div class="d-flex align-center mb-2" style="cursor: grab;">
+                  <div class="mr-4">
+                    <v-btn
+                      v-if="item.hidden"
+                      title="Скрыт"
+                      @click="columnHidden(item.name)"
+                    >
+                      <v-icon icon="mdi-eye-off" size="large"></v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-else
+                      title="Активен"
+                      @click="columnHidden(item.name)"
+                    >
+                      <v-icon icon="mdi-eye" size="large"></v-icon>
+                    </v-btn>
+                  </div>
+                  <div>
+                      {{item.value}}
+                  </div>
                 </div>
-                <div>
-                    {{item.value}}
-                </div>
-              </div>
-            </template>
-        </draggable>
-      </v-card>
+              </template>
+          </draggable>
+        </v-card>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -121,6 +121,7 @@ export default {
       required: true
     }
   },
+  emits: ['editTender', 'createTender', 'change'],
 
   async mounted() {
     // получаем настройки таблицы с сервера и после обновляем рендер таблицы
@@ -344,7 +345,7 @@ export default {
         case 'contract_addresses':
         case 'contract_contacts':
           return `
-            ${row[name] ? row[name].join(',<br>') : ''}
+            ${row[name] ? row[name] : ''}
           `
           break
         case 'contract_terms':
