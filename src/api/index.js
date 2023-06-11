@@ -112,8 +112,8 @@ export async function logout() {
 //           date:1684454400,
 //           note:"text",
 //           },
-//           addresses: "Адерс 1",
-//           contacts: "Контакт 1",
+//           addresses: ["Адерс 1"],
+//           contacts: ["Контакт 1"],
 //         },
 //         shipment:{
 //           date:1684516379,
@@ -167,8 +167,8 @@ export async function logout() {
 //           date: null,
 //           note:"Ещё не назначена",
 //           },
-//           addresses: "Адрес 2",
-//           contacts: "Контакт 2",
+//           addresses: ["Адрес 2"],
+//           contacts: ["Контакт 2"],
 //         },
 //         shipment:{
 //           date:1684516379,

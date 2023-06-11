@@ -116,19 +116,19 @@
                     </v-row>
                   </v-col>
                   <v-col cols="12">
-                    <p>Адреc и контакт</p>
+                    <p>Адреcа и контакты</p>
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.addresses"
-                          label="Адрес"
+                          label="Адреса"
                           persistent-hint
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.contacts"
-                          label="Контакт"
+                          label="Контакты"
                           persistent-hint
                         ></v-text-field>
                       </v-col>
@@ -321,8 +321,8 @@ export default {
         this.contract.date = formatToDate(this.tender.tender.contract_date)
         this.contract.terms.date = formatToDate(this.tender.tender.contract_terms.date)
         this.contract.terms.text = this.tender.tender.contract_terms.text
-        this.contract.addresses = this.tender.tender.contract_addresses
-        this.contract.contacts = this.tender.tender.contract_contacts
+        this.contract.addresses = this.tender.tender.contract_addresses.join(',')
+        this.contract.contacts = this.tender.tender.contract_contacts.join(',')
 
         if (this.tender.tender.shipment_date) {
           this.shipment.date = formatToDate(this.tender.tender.shipment_date)
@@ -429,8 +429,8 @@ export default {
               date: formatFromDate(this.contract.terms.date),
               note: this.contract.terms.note,
             },
-            addresses: this.contract.addresses,
-            contacts: this.contract.contacts
+            addresses: this.contract.addresses.split(','),
+            contacts: this.contract.contacts.split(',')
           },
           
           shipment: this.stage < 1 ? null : {

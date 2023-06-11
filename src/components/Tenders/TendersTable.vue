@@ -3,10 +3,10 @@
     <div class="table mr-16">
       <div class="table__title d-flex justify-space-between">
         <h2 class="text-h4 mb-8">Тендеры</h2>
-        <div>
+        <div class="ml-4">
           <v-btn 
             @click="openNewTenderModal"
-            class="mr-5"
+            class="mr-5 mb-2"
             color="primary"
           >
             Добавить тендер
@@ -14,6 +14,7 @@
           <v-btn 
             v-if="!isTableEdit"
             @click="startEditTable"
+            class="mb-2"
           >
             Редактировать
           </v-btn>
@@ -345,7 +346,7 @@ export default {
         case 'contract_addresses':
         case 'contract_contacts':
           return `
-            ${row[name] ? row[name] : ''}
+            ${row[name] ? row[name].join(',') : ''}
           `
           break
         case 'contract_terms':
