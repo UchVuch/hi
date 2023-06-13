@@ -2,7 +2,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL
 
 export async function getTenders(start, length) {
   const res = await fetch(`${BASE_URL}/api/tenders?start=${start}&length=${length}`)
-  if( res.status >=400 ){
+  if (res.status >= 400) {
     return false
   }
   const data = await res.json()
@@ -10,7 +10,7 @@ export async function getTenders(start, length) {
 }
 
 export async function putTender(tender, id) {
-  const res = await fetch(`${BASE_URL}/api/tenders?${id}`, {
+  const res = await fetch(`${BASE_URL}/api/tenders/${id}`, {
     method: 'PUT',
     body: JSON.stringify(tender),
     headers: {
@@ -41,18 +41,18 @@ export async function setSettingsTable(settings) {
 
 export async function getSettingsTable() {
   const res = await fetch(`${BASE_URL}/api/tenders/table_settings`)
-  if( res.status >=400 ){
+  if (res.status >= 400) {
     return false
   }
   const data = await res.json()
-  // ожидаю внутри поле data с массивом
-  return data.data
+  // ожидаю внутри массив
+  return data
 }
 
 export async function login(user) {
   const res = await fetch(`${BASE_URL}/login`, {
     method: 'POST',
-    body:JSON.stringify(user),
+    body: JSON.stringify(user),
     headers: {
       "Content-Type": "application/json"
     }
@@ -78,115 +78,187 @@ export async function logout() {
 // export async function getme() {
 // }
 
+// моковый запрос настроек
+// export async function getSettingsTable() {
+//   return [
+//     {
+//       name: 'contract_seller_name',
+//       value: 'Имя продавца',
+//       hidden: true,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_customer_name',
+//       value: 'Имя клиента',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_procuring',
+//       value: 'Контракт',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_equipment',
+//       value: 'Оборудование в контракте',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_number',
+//       value: 'Номер договора',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_date',
+//       value: 'Дата контракта',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_terms',
+//       value: 'Условия контракта',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_addresses',
+//       value: 'Адреса',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_contacts',
+//       value: 'Контакты',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'shipment_date',
+//       value: 'Дата отгрузки',
+//       hidden: false,
+//       stage: 'shipment',
+//     },
+//     {
+//       name: 'shipment_equipment',
+//       value: 'Отгрузка оборудования',
+//       hidden: false,
+//       stage: 'shipment',
+//     },
+//     {
+//       name: 'inspection_payment',
+//       value: 'Оплата',
+//       hidden: false,
+//       stage: 'inspection',
+//     },
+//     {
+//       name: 'inspection_penalties',
+//       value: 'Штраф',
+//       hidden: false,
+//       stage: 'inspection',
+//     },
+//     {
+//       name: 'inspection_approved',
+//       value: 'Одобрено',
+//       hidden: false,
+//       stage: 'inspection',
+//     },
+//   ]
+// }
+
 // моковый запрос тендеров
 // export async function getTenders(start, length) {
 //   const res = await fetch(`${BASE_URL}/api/tenders?start=${start}&length=${length}`)
-//   return {records_total: 10, records_filtered: 20, data: [
-//     {
+//   return {
+//     records_total: 1, records_filtered: 1, data: [
+//       {
 //         id: 1,
-//         stage: 2,
-//         contract:{
+//         contract: {
 //           seller_name: 'name1',
 //           customer_name: 'name2',
-//           procuring:{
-//           contract:{amount:null,date:1674651234},
-//           guarantee:{amount:3452.43,date:null},
+//           procuring: {
+//             contract: { amount: 0, date: 1674651234 },
+//             guarantee: { amount: 3452.43, date: 1674651234 },
 //           },
-//           equipment:[
-//           {
-//           name:"equip0",
-//           count:2,
-//           price:3555.33,
-//           variation:"variation3",
-//           },
-//           {
-//           name:"equip1",
-//           count:22,
-//           price:345.33,
-//           variation:"variation1",
-//           }
-//         ],
-//           number:431,
-//           date:1684454400,
-//           terms:{
-//           date:1684454400,
-//           note:"text",
+//           equipment: [
+//             {
+//               name: "equip0",
+//               count: 2,
+//               price: 3555.33,
+//               variation: "variation3",
+//             },
+//             {
+//               name: "equip1",
+//               count: 22,
+//               price: 345.33,
+//               variation: "variation1",
+//             }
+//           ],
+//           number: 431,
+//           date: 1684454400,
+//           terms: {
+//             date: 1684454400,
+//             note: "text",
 //           },
 //           addresses: ["Адерс 1"],
 //           contacts: ["Контакт 1"],
 //         },
-//         shipment:{
-//           date:1684516379,
-//           equipment:[
-//           {
-//           name:"equip00",
-//           count:2,
-//           price:3555.33,
-//           variation:"variation3",
-//           },
-//           {
-//           name:"equip11",
-//           count:22,
-//           price:345.33,
-//           variation:"variation1",
-//           }
-//         ],
-//         },
-//         inspection:{
-//           penalties:123.32,
-//           payment:456.33,
-//           approved:true,
-//         }
+//         shipment: null,
+//         inspection: null,
 //       },
 //       {
 //         id: 2,
-//         stage: 1,
-//         contract:{
-//           seller_name:"",
-//           customer_name:"name4",
-//           procuring:{
-//           contract:{amount:3452.43,date:1684514371},
-//           guarantee:{amount:3452.43,date:1684514371},
+//         contract: {
+//           seller_name: 'name3',
+//           customer_name: 'name4',
+//           procuring: {
+//             contract: { amount: 0, date: 1674651234 },
+//             guarantee: { amount: 3452.43, date: 1674651234 },
 //           },
-//           equipment:[
-//           {
-//           name:"equip2",
-//           count:2,
-//           price:3555.33,
-//           variation:"variation3",
+//           equipment: [
+//             {
+//               name: "equip0",
+//               count: 2,
+//               price: 3555.33,
+//               variation: "variation3",
+//             },
+//             {
+//               name: "equip1",
+//               count: 22,
+//               price: 345.33,
+//               variation: "variation1",
+//             }
+//           ],
+//           number: 431,
+//           date: 1684454400,
+//           terms: {
+//             date: 1684454400,
+//             note: "text",
 //           },
-//           {
-//           name:"equip3",
-//           count:22,
-//           price:345.33,
-//           variation:"variation1",
-//           }],
-//           number:431,
-//           date:1684514371,
-//           terms:{
-//           date: null,
-//           note:"Ещё не назначена",
-//           },
-//           addresses: ["Адрес 2"],
-//           contacts: ["Контакт 2"],
+//           addresses: ["Адерс 1"],
+//           contacts: ["Контакт 1"],
 //         },
-//         shipment:{
-//           date:1684516379,
-//           equipment:[
-//           {
-//           name:"equip03",
-//           count:2,
-//           price:3555.33,
-//           variation:"variation3",
-//           },
-//           {
-//           name:"equip13",
-//           count:22,
-//           price:345.33,
-//           variation:"variation1",
-//           }],
+//         shipment: {
+//           date:1684454400,
+//           equipment: [
+//             {
+//               name: "equip3",
+//               count: 2,
+//               price: 3555.33,
+//               variation: "variation3",
+//             },
+//             {
+//               name: "equip4",
+//               count: 22,
+//               price: 345.33,
+//               variation: "variation1",
+//             }
+//           ],
 //         },
-//         inspection: null
+//         inspection: null,
 //       },
-//     ],}
+//     ]
+//   }
 // }

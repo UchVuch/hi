@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-space-between">
-    <div class="table mr-16">
+    <div class="table">
       <div class="table__title d-flex justify-space-between">
         <h2 class="text-h4 mb-8">Тендеры</h2>
         <div class="ml-4">
@@ -50,7 +50,7 @@
         </li>
       </ul>
     </div>
-    <div class="edit-table ml-16">
+    <div class="edit-table">
       <div class="edit-table__content" v-if="isTableEdit">
         <!-- <v-btn class="w-100" @click="cancelEditTable">Отменить изменения</v-btn> -->
         <v-row class="mt-2">
@@ -85,8 +85,9 @@
                       <v-icon icon="mdi-eye" size="large"></v-icon>
                     </v-btn>
                   </div>
-                  <div>
+                  <div class="d-flex justify-space-between w-100">
                       {{item.value}}
+                      <v-icon icon="mdi-drag-vertical" class="align-self-end"></v-icon>
                   </div>
                 </div>
               </template>
@@ -126,8 +127,7 @@ export default {
 
   async mounted() {
     // получаем настройки таблицы с сервера и после обновляем рендер таблицы
-    // const settingsData = await getSettingsTable()
-    const settingsData = null
+    const settingsData = await getSettingsTable()
     settingsData ? this.settingsTable = settingsData : '' 
     this.setSelectColumnsNames()
   },
@@ -136,7 +136,6 @@ export default {
     selectedColumns: [],
     selectedColumnsNames: [],
     sortedRows: [],
-    // settingsTable: [],
     // стандартные настройки
     settingsTable: [
       {
@@ -165,7 +164,7 @@ export default {
       },
       {
         name: 'contract_number',
-        value: 'Число контракта',
+        value: 'Номер договора',
         hidden: false,
         stage: 'contract',
       },
@@ -265,7 +264,6 @@ export default {
       this.rows.forEach(row => {
         let fullObj = {
           id: row.id,
-          stage: row.stage,
         }
         // contract{}, shipment{}, inspection{}
         const stageObg = Object.keys(row)
@@ -283,12 +281,11 @@ export default {
                   ...fullObj,
                   ...stageObj
                 }
-                // console.log(fullObj)
             }
           })
         newArr.push(fullObj)
       })
-      console.log(newArr)
+      // console.log(newArr)
       this.sortedRows = newArr
       // со свойствами без приставок
       // const filteredColumns = Object.keys(row)
@@ -313,6 +310,7 @@ export default {
       await setSettingsTable(this.settingsTable)
       // обновляем настройки
       this.settingsTable = await getSettingsTable()
+      this.isTableEdit = false
       this.setSelectColumnsNames()
     },
     columnHidden(name) {
@@ -355,7 +353,7 @@ export default {
           `
           break
         case 'inspection_approved':
-          return row[name] ? 'Одобрено' : 'Неодобрено'
+          return row[name] ? 'Да' : 'Нет'
         default:
         return `${row[name] ? row[name] : ''}`
       }
@@ -391,11 +389,11 @@ export default {
 .current-page {
   border: 2px solid #3b3b3b !important;
 }
-.edit-table {
+.edit-table__content {
   max-width: 300px;
+  margin-left: 80px;
 }
 .table {
-  max-width: 1100px;
   min-width: 380px;
   overflow-x: auto;
 }

@@ -12,13 +12,13 @@
                   <v-text-field v-model="equipment.name" label="Название"/>
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field v-model="equipment.variation" label="Вид"/>
+                  <v-text-field v-model="equipment.variation" label="Модификация "/>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field v-model="equipment.price" label="Стоимость"/>
                 </v-col>
                 <v-col cols="12" md="6">
-                  <v-text-field v-model="equipment.count" label="Количетсво"/>
+                  <v-text-field v-model="equipment.count" label="Количество"/>
                 </v-col>
               </v-row>
             </v-form>

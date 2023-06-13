@@ -39,8 +39,9 @@
                   <v-col cols="12" md="6">
                     <v-text-field
                       v-model="contract.number"
-                      label="Число"
-                      hint="Десятичные значения указываются через точку, например 350.05"
+                      label="Номер договора"
+                      hint="Укажите целое число"
+                      :rules="notDecimal"
                       persistent-hint
                     ></v-text-field>
                   </v-col>
@@ -54,7 +55,7 @@
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12">
-                    <p>Условия</p>
+                    <p class="line-title">Условия</p>
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
@@ -74,12 +75,14 @@
                     </v-row>
                   </v-col>
                   <v-col cols="12">
-                    <p>Контракт</p>
+                    <p class="line-title">Контракт</p>
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
-                        v-model="contract.procuring.contract.amount"
+                          v-model="contract.procuring.contract.amount"
                           label="Сумма"
+                          hint="Десятичные значения указываются через точку, например 350.05"
+                          persistent-hint
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6">
@@ -94,7 +97,7 @@
                     </v-row>
                   </v-col>
                   <v-col cols="12">
-                    <p>Гарантия</p>
+                    <p class="line-title">Гарантия</p>
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
@@ -116,19 +119,19 @@
                     </v-row>
                   </v-col>
                   <v-col cols="12">
-                    <p>Адреcа и контакты</p>
+                    <p class="line-title">Адреcа и контакты</p>
                     <v-row>
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.addresses"
-                          label="Адреса"
+                          label="Адрес"
                           persistent-hint
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6">
                         <v-text-field
                           v-model="contract.contacts"
-                          label="Контакты"
+                          label="Контакт"
                           persistent-hint
                         ></v-text-field>
                       </v-col>
@@ -136,14 +139,14 @@
                   </v-col>
                   <v-col cols="12">
                     <div>
-                      <span class="mr-4">Оборудование</span>
+                      <span class="mr-4 line-title">Оборудование</span>
                       <v-btn color="primary" title="Добавить" @click="addEquipment">
                         <v-icon size="large" icon="mdi-plus"></v-icon>
                       </v-btn>
                     </div>
                     <template v-for="item in contract.equipment">
                       <div class="pa-2 d-flex align-center justify-space-between">
-                        <div class="text-h6">{{item?.name}} {{item?.variation}} — {{item?.price}} / {{item?.count }}</div>
+                        <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
                         <div class="d-flex ml-4" style="margin-left: auto;">
                           <v-btn @click="editEqipment(contract.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
                           <v-btn @click="deleteEqipment(contract.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
@@ -185,14 +188,14 @@
                   </v-col>
                   <v-col cols="12">
                     <div>
-                      <span class="mr-4">Оборудование</span>
+                      <span class="mr-4 line-title">Оборудование</span>
                       <v-btn color="primary" title="Добавить" @click="addEquipment">
                         <v-icon size="large" icon="mdi-plus"></v-icon>
                       </v-btn>
                     </div>
                     <template v-for="item in shipment.equipment">
                       <div class="pa-2 d-flex align-center justify-space-between">
-                        <div class="text-h6">{{item?.name}} {{item?.variation}} — {{item?.price}} / {{item?.count }}</div>
+                        <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
                         <div class="d-flex ml-4" style="margin-left: auto;">
                           <v-btn @click="editEqipment(shipment.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
                           <v-btn @click="deleteEqipment(shipment.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
@@ -243,7 +246,7 @@
                     <v-select
                       v-model="inspection.approved"
                       :items="['Да', 'Нет']"
-                      label="Неодобрено"
+                      label="Одобрено — Да/Нет"
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -312,17 +315,25 @@ export default {
 
         this.contract.seller_name = this.tender.tender.contract_seller_name
         this.contract.customer_name = this.tender.tender.contract_customer_name
-        this.contract.procuring.contract.amount = this.tender.tender.contract_procuring.contract.amount
+        this.contract.procuring.contract.amount = this.tender.tender.contract_procuring.contract.amount.toString()
         this.contract.procuring.contract.date = formatToDate(this.tender.tender.contract_procuring.contract.date)
-        this.contract.procuring.guarantee.amount = this.tender.tender.contract_procuring.guarantee.amount
+        this.contract.procuring.guarantee.amount = this.tender.tender.contract_procuring.guarantee.amount.toString()
         this.contract.procuring.guarantee.date = formatToDate(this.tender.tender.contract_procuring.guarantee.date)
         this.contract.equipment = [...this.tender.tender.contract_equipment]
-        this.contract.number = this.tender.tender.contract_number
+        this.contract.number = this.tender.tender.contract_number.toString()
         this.contract.date = formatToDate(this.tender.tender.contract_date)
         this.contract.terms.date = formatToDate(this.tender.tender.contract_terms.date)
         this.contract.terms.text = this.tender.tender.contract_terms.text
         this.contract.addresses = this.tender.tender.contract_addresses.join(',')
         this.contract.contacts = this.tender.tender.contract_contacts.join(',')
+
+        if (this.tender.tender.inspection_penalties) {
+          this.inspection.penalties = this.tender.tender.inspection_penalties.toString()
+          this.inspection.payment = this.tender.tender.inspection_payment.toString()
+          this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
+        } else {
+          this.stage = 1
+        }
 
         if (this.tender.tender.shipment_date) {
           this.shipment.date = formatToDate(this.tender.tender.shipment_date)
@@ -331,17 +342,9 @@ export default {
           this.stage = 0
         }
 
-        if (this.tender.tender.inspection_penalties) {
-          this.inspection.penalties = this.tender.tender.inspection_penalties
-          this.inspection.payment = this.tender.tender.inspection_payment
-          this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
-        } else {
-          this.stage = 1
-        }
-
       } else {
         this.isNewTender = true
-        this.id = Date.now()
+        this.id = 0
         this.stage = 0
       }
     },
@@ -354,6 +357,14 @@ export default {
       isValidDate: [
         value => {
           return validateDate(value)
+        }
+      ],
+      notDecimal: [
+        value => {
+          if (value.includes('.') || value.includes(',')) {
+            return 'Номер договора не должен быть десятичным числом'
+          } 
+          return true
         }
       ],
       required: [
@@ -369,11 +380,11 @@ export default {
         seller_name: '',
         customer_name: '',
         procuring: {
-          contract: { amount: 0, date:  formatToDate( currentDate() ) },
-          guarantee: { amount: 0, date: formatToDate( currentDate() ) },
+          contract: { amount: '0', date:  formatToDate( currentDate() ) },
+          guarantee: { amount: '0', date: formatToDate( currentDate() ) },
         },
         equipment: [],
-        number: 0,
+        number: '0',
         date: formatToDate( currentDate() ),
         terms: {
           date: formatToDate( currentDate() ),
@@ -387,8 +398,8 @@ export default {
         equipment: [],
       },
       inspection: {
-        penalties: 0,
-        payment: 0,
+        penalties: '0',
+        payment: '0',
         approved: 'Нет',
       },
     }),
@@ -414,11 +425,11 @@ export default {
             customer_name: this.contract.customer_name,
             procuring: {
               contract: { 
-                amount: this.contract.procuring.contract.amount,
+                amount: Number(this.contract.procuring.contract.amount),
                 date: formatFromDate(this.contract.procuring.contract.date)
                 },
               guarantee: { 
-                amount: this.contract.procuring.guarantee.amount,
+                amount: Number(this.contract.procuring.guarantee.amount),
                 date: formatFromDate(this.contract.procuring.guarantee.date)
               }
             },
@@ -453,12 +464,10 @@ export default {
         this.dialogEquipment = false
       },
       addEquipment() {
-        this[this.tab].equipment.push({name: 'new', price: '', count: '', variation: ''})
+        this[this.tab].equipment.push({name: 'Новое оборудование', price: '', count: '', variation: ''})
       },
       deleteEqipment(index) {
         this[this.tab].equipment.splice(index, 1)
-        console.log('удалить', index)
-        console.log(this[this.tab].equipment)
       },
       editEqipment(index, item) {
         this.currentEqipment = {
@@ -476,5 +485,8 @@ export default {
 </script>
 
 <style scoped>
-
+.line-title {
+  font-size: 20px;
+  margin-block: 15px 10px;
+}
 </style>

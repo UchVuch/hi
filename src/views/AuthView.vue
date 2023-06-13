@@ -48,7 +48,7 @@ export default {
       }
       // если авторизация успешна переходим на основную страницу
       const status = await login(user)
-      console.log(status)
+      // console.log(status)
       if (status) {
         this.authLogin()
         this.$router.push('/home')
@@ -82,7 +82,7 @@ export default {
         }
         // если авторизация успешна переходим на основную страницу
         const status = await login(user)
-        console.log(status)
+        // console.log(status)
         if (status) {
           this.authLogin()
           this.$router.push('/home')
