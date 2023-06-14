@@ -327,7 +327,7 @@ export default {
         this.contract.addresses = this.tender.tender.contract_addresses.join(',')
         this.contract.contacts = this.tender.tender.contract_contacts.join(',')
 
-        if (this.tender.tender.inspection_penalties) {
+        if (this.tender.tender.inspection_penalties >= 0) {
           this.inspection.penalties = this.tender.tender.inspection_penalties.toString()
           this.inspection.payment = this.tender.tender.inspection_payment.toString()
           this.inspection.approved = this.tender.tender.inspection_approved ? 'Да' : 'Нет'
@@ -341,7 +341,7 @@ export default {
         } else {
           this.stage = 0
         }
-
+        console.log(this.stage)
       } else {
         this.isNewTender = true
         this.id = 0
