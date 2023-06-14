@@ -301,7 +301,7 @@ export default {
       // return newArr
     },
     setSelectColumnsNames() {
-      this.selectedColumnsNames = this.settingsTable.filter(row => !row.hidden).map(row => row.name)
+      this.selectedColumnsNames = this.settingsTable.map(row => row.name)
       this.selectColumns()
       this.sortRows()
     },
