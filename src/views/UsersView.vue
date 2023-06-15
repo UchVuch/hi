@@ -160,6 +160,7 @@ import { logout } from '../api'
 export default {
     async mounted() {
         await this.getRoles()
+        await this.getUsers()
     },
     data: () => ({
         isAdmin: true,
