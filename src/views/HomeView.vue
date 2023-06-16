@@ -50,6 +50,7 @@ export default {
 
   methods: {
     openTenderModal(item) {
+      console.log(item)
       this.currentTender = {...item}
       this.tenderModal = true
     },
@@ -63,13 +64,13 @@ export default {
       await this.getCurrentTenders()
     },
     async saveTender(item) {
-      // console.log('cохранить', JSON.stringify(item))
+      console.log('cохранить', JSON.stringify(item))
       await putTender(item, item.id)
       await this.getCurrentTenders()
       this.tenderModal = false
     },
     async createTender(item) {
-      // console.log('создать', JSON.stringify(item))
+      console.log('создать', JSON.stringify(item))
       await postTender(item)
       await this.getCurrentTenders()
       this.tenderModal = false
