@@ -345,10 +345,11 @@ export default {
       isAdmin: true,
       isFileLoading: false,
       isCreatingFolder: false,
+      errorDescription: '',
     }),
 
     async mounted() {
-      await this.getDir()
+      await this.getDir(this.currentDirId)
     },
     
     methods: {
@@ -467,7 +468,6 @@ export default {
         if (response.status === 200) {  
           this.folders = data.dirs
           this.files = data.files
-          this.files.push({id: 1, name: 'test', caption: 'Описание'})
         } 
         if (response.status === 401) {
           this.username = ''
@@ -477,6 +477,7 @@ export default {
         if (response.status === 500) {
           const error = await response.json()
           this.errorDescription = error.ErrorDescription
+          // this.errorDescription = 'Ошибка в базе данных'
           this.customAlert(this.errorDescription)
         }
       },

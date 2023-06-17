@@ -71,7 +71,8 @@ export async function login(user) {
 export async function logout() {
   const res = await fetch(`${BASE_URL}/logout`, {
     method: 'POST'
-  }).catch((error) => ("Ошибка", error));
+  }).catch((error) => ("Ошибка", error))
+  if (document.cookie) document.cookie = "name=user;expires=" + cookie_date.toUTCString()
   localStorage.clear()
 }
 

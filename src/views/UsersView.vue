@@ -159,13 +159,14 @@ import { logout } from '../api'
 
 export default {
     async mounted() {
-        await this.getRoles()
-        await this.getUsers()
+      await this.getRoles()
+      await this.getUsers()
     },
     data: () => ({
         isAdmin: true,
         errorDescription: 'Ошибка',
         users: [],
+        roles: [],
         roleNames: [
         ],
         changeUser: {
@@ -199,7 +200,8 @@ export default {
             const response = await fetch(`${import.meta.env.VITE_VUE_APP_SERVER}api/roles`)
 
             if (response.status === 200) {
-                this.roles = await response.json()
+                const data = await response.json()
+                this.roles = data
                 this.roleNames = data.concat().map(role => {
                     return role.name
                 })
@@ -283,6 +285,7 @@ export default {
         },
         async sendNewUser() {
             const newUser = {
+                id: 0,
                 role_id: this.roleNameToId(this.createUser.roleName),
                 username: this.createUser.userName,
                 name: this.createUser.name,
@@ -326,7 +329,8 @@ export default {
                 role_id: this.roleNameToId(this.changeUser.roleName),
                 username: this.changeUser.userName,
                 name: this.changeUser.name,
-                password: this.changeUser.password
+                password: this.changeUser.password === '******' ? this.changeUser.password : '',
+                id: 0,
             }
             const response = await fetch(`${import.meta.env.VITE_VUE_APP_SERVER}api/users/${id}`, {
                 method: 'PUT',
@@ -360,7 +364,7 @@ export default {
                 id: user.id,
                 name: user.name,
                 userName: user.username,
-                password: user.password,
+                password: '******',
                 roleName: this.roleIdToName(user.role_id)
             }
         },
