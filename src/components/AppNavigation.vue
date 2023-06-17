@@ -6,16 +6,11 @@
     permanent
   >
     <v-list nav width="12vw">
-      <v-list-item prepend-icon="mdi-view-dashboard" title="Тендеры" @click="$router.push('/home')"></v-list-item>
-    </v-list>
-    <v-list nav width="12vw">
-      <v-list-item prepend-icon="mdi-view-dashboard" title="Генератор" @click="$router.push('/generator')"></v-list-item>
-    </v-list>
-    <v-list nav width="12vw">
-      <v-list-item prepend-icon="mdi-view-dashboard" title="База данных" @click="$router.push('/database')"></v-list-item>
-    </v-list>
-    <v-list nav width="12vw">
-      <v-list-item prepend-icon="mdi-view-dashboard" title="Пользователи" @click="$router.push('/users')"></v-list-item>
+      <!-- <v-list-item prepend-icon="mdi-gavel"  title="Тендеры" value="home" :to="'home'"></v-list-item> -->
+      <v-list-item prepend-icon="mdi-view-dashboard"  title="Тендеры" value="home" :to="'home'"></v-list-item>
+      <v-list-item prepend-icon="mdi-code-braces-box"  title="Генератор" value="generator" :to="'generator'"></v-list-item>
+      <v-list-item prepend-icon="mdi-folder"  title="База данных" value="database" :to="'database'"></v-list-item>
+      <v-list-item prepend-icon="mdi-account-group"  title="Пользователи" value="users" :to="'users'"></v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -35,7 +30,10 @@ export default {
 }
 </script>
 <style scoped>
-/* .v-list-item { */
-  /* grid-template-columns: 30px auto max-content; */
-/* } */
+.v-list-item {
+  grid-template-columns: 30px auto max-content;
+}
+.v-list-item:hover {
+    color: rgb(48,79,254);
+}
 </style>
