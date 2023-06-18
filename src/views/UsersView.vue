@@ -1,5 +1,5 @@
 <template>
-    <div style="padding-left: 14vw; padding-top: 100px;">
+    <div style="padding-left: 14vw; padding-top: 100px;" v-if="access.users > 0">
         <div class="pt-5 pb-10 pr-5">
             <div class="mt-4 mb-2">
                 <v-row class="folder-line d-flex align-center mb-6 mr-14">
@@ -44,10 +44,11 @@
                             {{ user.roleName }}
                         </span>
                     </v-col>
-                    <v-icon class="ml-3" color="primary" @click="openChangeUserDialog(user.id)" v-if="isAdmin">
+                    <v-icon class="ml-3" color="primary" @click="openChangeUserDialog(user.id)" v-if="access.users > 1">
                         mdi-pencil
                     </v-icon>
-                    <v-icon class="ml-3" color="red darken-4" @click="deleteUser(user.id)" v-if="isAdmin">
+                    <div v-else style="width:57px"></div>
+                    <v-icon class="ml-3" color="red darken-4" @click="deleteUser(user.id)" v-if="access.users > 2">
                         mdi-delete
                     </v-icon>
                     <div v-else style="width:57px"></div>
@@ -98,7 +99,7 @@
                 </v-form>
             </v-dialog>
 
-            <div class="create-user pt-8" v-if="isAdmin">
+            <div class="create-user pt-8" v-if="access.users > 1">
                 <v-btn class="mr-4 mb-4" color="success"
                     @click="this.createUser.createUserForm = this.createUser.createUserForm === true ? false : true">
                     <v-icon size="24">
@@ -157,11 +158,21 @@
 <script>
 import { logout } from '../api'
 
+import { mapState } from 'pinia'
+import {useAuthStore} from '@/plugins/store/auth'
+
 export default {
     async mounted() {
       await this.getRoles()
       await this.getUsers()
     },
+
+    computed: {
+      ...mapState(useAuthStore, {
+        access: 'access'
+      }),
+    },
+
     data: () => ({
         isAdmin: true,
         errorDescription: 'Ошибка',

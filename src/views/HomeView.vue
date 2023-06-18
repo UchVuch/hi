@@ -1,15 +1,15 @@
 <template>
-  <div class="d-flex h-100" style="padding-top: 30vh;">
+  <div class="d-flex h-100" style="padding-top: 30vh;" v-if="access.tenders > 0">
     <div class="table__wrapper w-100">
       <TendersTable @editTender="openTenderModal" @createTender="openNewTenderModal" @change="changePage" :tenders="currentTenders" :totalPages="totalPages" :page="page"/>
-      <v-alert
+      <!-- <v-alert
         style="position: absolute; top: 60px; right: 20px; z-index: 5000;"
         v-model="alert"
         type="error"
-      title="Нельзя начать новый этап"
-      text="Чтобы начать новый этап, заполните все поля предыдущего"
+        title="Нельзя начать новый этап"
+        text="Чтобы начать новый этап, заполните все поля предыдущего"
       >
-      </v-alert>
+      </v-alert> -->
     </div>
 
     <v-dialog v-model="tenderModal">
@@ -21,18 +21,19 @@
 <script>
 import { getTenders, putTender, postTender } from "@/api"
 
+import { mapState } from 'pinia'
+import {useAuthStore} from '@/plugins/store/auth'
+
 import TendersTable from "../components/Tenders/TendersTable.vue"
 import TenderForm from "../components/Tenders/TenderForm.vue"
-import TenderEquipmentForm from "../components/Tenders/TenderEquipmentForm.vue"
 
 export default {
-  components: { TendersTable, TenderForm, TenderEquipmentForm },
+  components: { TendersTable, TenderForm, },
   async mounted() {
     await this.getCurrentTenders()
-    // console.log(this.tenders)
   },
   data: () => ({
-    alert: false,
+    // alert: false,
     tenderModal: false,
     start: 0,
     length: 10,
@@ -45,7 +46,10 @@ export default {
   computed: {
     currentTenders() {
       return [...this.tenders]
-    }
+    },
+    ...mapState(useAuthStore, {
+      access: 'access'
+    })
   }, 
 
   methods: {
@@ -77,7 +81,6 @@ export default {
     },
     async getCurrentTenders() {
       const { records_total: totalTenders, records_filtered, data } = await getTenders(this.start, this.length)
-      // console.log(data)
       this.totalPages = Math.ceil( totalTenders / this.length )
       this.tenders = [...data]
     },

@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { login } from '../api'
+import { login, getme, getRoles, getUser } from '../api'
 import { mapActions } from 'pinia'
 import {useAuthStore} from '@/plugins/store/auth'
 
@@ -50,7 +50,19 @@ export default {
       const status = await login(user)
       // console.log(status)
       if (status) {
-        this.authLogin()
+        const user = await getme()
+        const userId = user.slice(8)
+        const userData = await getUser(userId)
+        const roles = await getRoles()
+        const accessRules = roles.find(role => role.id === userData.role_id)
+        // const accessRules = {
+        //   access_users: 2,
+        //   access_keys: 0,
+        //   access_tenders: 1,
+        //   access_files: 1,
+        // }
+        // console.log(accessRules)
+        this.authLogin(accessRules)
         this.$router.push('/home')
       } else {
         console.log('Ошибка')
@@ -84,7 +96,19 @@ export default {
         const status = await login(user)
         // console.log(status)
         if (status) {
-          this.authLogin()
+          const user = await getme()
+          const userId = user.slice(8)
+          const userData = await getUser(userId)
+          const roles = await getRoles()
+          const accessRules = roles.find(role => role.id === userData.role_id)
+          // const accessRules = {
+          //   access_users: 3,
+          //   access_keys: 0,
+          //   access_tenders: 1,
+          //   access_files: 1,
+          // }
+          // console.log(accessRules)
+          this.authLogin(accessRules)
           this.$router.push('/home')
         } else {
           console.log('Ошибка')
@@ -95,4 +119,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped></style>

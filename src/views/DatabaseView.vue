@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-left: 14vw; padding-top: 100px;">
+  <div style="padding-left: 14vw; padding-top: 100px;" v-if="access.files > 0">
     <div class="pt-5 pb-10 pr-5 pl-5">
       <!-- Вывод пути к текущей директории -->
       <div class="row flex-wrap pb-5 ml-0 mr-0 container-fluid">
@@ -64,7 +64,7 @@
           <v-icon class="ml-3" 
           color="red darken-4"
           @click="deleteDir(folder.id)"
-          v-if="isAdmin">
+          v-if="access.files > 2">
             mdi-delete
           </v-icon>
         </v-row>
@@ -73,9 +73,11 @@
           v-for="file of files">
                 <v-icon class="mr-2"
                 color="primary"
-                @click="openFileDialog(file)">
+                @click="openFileDialog(file)"
+                v-if="access.files > 1">
                   mdi-pencil
                 </v-icon>
+                <div style="width: 32px;" v-else></div> 
                 <v-btn class="pl-2 pr-2 flex-grow-1 justify-start"
                 :download="file.name" 
                 :href="`/api/files/${file.id}`">
@@ -99,7 +101,7 @@
                 <v-icon class="ml-3"
                 color="red darken-4"
                 @click="deleteFile(file.id)"
-                v-if="isAdmin">
+                v-if="access.files > 2">
                   mdi-delete
                 </v-icon>
         </v-row>
@@ -226,7 +228,7 @@
       </div>
 
       <!-- Добавить папку -->
-      <v-row class="pt-8 pb-10" v-if="isAdmin">
+      <v-row class="pt-8 pb-10" v-if="access.files > 1">
           <v-btn class="mr-4" color="success"
           @click="isCreatingFolder = isCreatingFolder === false ? true : false">
             Добавить папку
@@ -252,7 +254,7 @@
       
 
       <!-- Добавление новых файлов -->
-      <div class="container mt-8">
+      <div class="container mt-8" v-if="access.files > 1">
 
         <div class="text-center pb-5">
           <h1>Добавить файлы</h1>
@@ -319,6 +321,9 @@
 <script>
 import { logout } from '../api'
 
+import { mapState } from 'pinia'
+import {useAuthStore} from '@/plugins/store/auth'
+
 export default {
     data: () => ({
       uploadingFiles:[],
@@ -350,6 +355,12 @@ export default {
 
     async mounted() {
       await this.getDir(this.currentDirId)
+    },
+
+    computed: {
+      ...mapState(useAuthStore, {
+        access: 'access'
+      }),
     },
     
     methods: {
@@ -462,12 +473,14 @@ export default {
       },
       async getDir(id) {
         const response = await fetch(`${ import.meta.env.VITE_VUE_APP_SERVER }api/dirs/${id}`)
-        const data = await response.json()
-
-
+        
+        
         if (response.status === 200) {  
+          const data = await response.json()
           this.folders = data.dirs
           this.files = data.files
+          // this.folders.push({id: 1, name: 'тестовая папка'})
+          // this.files.push({id: 1, name: 'файл 1', caption: 'Описание'})
         } 
         if (response.status === 401) {
           this.username = ''
@@ -500,9 +513,9 @@ export default {
         
           if(response.status === 200) {
           // const data = await response.json()      
+          // this.folders.push({name: `${this.nameNewDir}`, id: data.id})
           this.isCreatingFolder = false
           this.getDir(this.currentDirId)
-          // this.folders.push({name: `${this.nameNewDir}`, id: data.id})
           this.nameNewDir = ''
         } 
         if (response.status === 401) {
@@ -534,8 +547,8 @@ export default {
           await logout()   
         } 
         if (response.status === 500) {
-          // const error = await response.json()
-          // this.errorDescription = error.ErrorDescription
+          const error = await response.json()
+          this.errorDescription = error.ErrorDescription
           this.customAlert(this.errorDescription)
         } 
       },
@@ -557,41 +570,6 @@ export default {
           this.currentDirId = Number(this.way.slice(4)) 
           this.getDir(this.currentDirId)
           this.closeDirDialog()
-        } 
-        if (response.status === 401) {
-          this.username = ''
-          this.password = ''
-          await logout()   
-        } 
-        if (response.status === 500) {
-          const error = await response.json()
-          this.errorDescription = error.ErrorDescription
-          this.customAlert(this.errorDescription)
-        }
-      },
-      async createDir() {
-        this.currentDirId = Number(this.way.slice(4))
-
-        const newDir = {
-          dir_id: this.currentDirId,
-          name: this.nameNewDir
-        }
-
-        const response = await fetch(`${ import.meta.env.VITE_VUE_APP_SERVER }api/dirs`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-          },
-          body: JSON.stringify(newDir)
-        })
-
-        
-          if(response.status === 200) {
-          // const data = await response.json()      
-          this.isCreatingFolder = false
-          this.getDir(this.currentDirId)
-          // this.folders.push({name: `${this.nameNewDir}`, id: data.id})
-          this.nameNewDir = ''
         } 
         if (response.status === 401) {
           this.username = ''
@@ -658,11 +636,7 @@ export default {
             body: formData,
         }).catch((error) => ("Something went wrong!", error));
         
-        // const response = {
-        //   status: 201
-        // }
-        
-        if(response.status === 201) {    
+        if(response.status === 200) {    
         this.isFileLoading = false
         this.getDir(this.currentDirId)
         } 
@@ -744,6 +718,12 @@ export default {
   .folder-line span.file-name {
     color: #2a92ca !important;
   }
+
+  a:hover {
+    color: inherit;
+  }
+
+
 
   .change-user-dialog {
     width: 800px;

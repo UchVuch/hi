@@ -49,6 +49,46 @@ export async function getSettingsTable() {
   return data
 }
 
+export async function getRoles() {
+  const response = await fetch(`${import.meta.env.VITE_VUE_APP_SERVER}api/roles`)
+
+  if (response.status === 200) {
+    const data = await response.json()
+    return data
+  }
+  if (response.status === 401) {
+    return false
+  }
+  if (response.status === 500) {
+    return false
+  }
+}
+
+export async function getme() {
+  const res = await fetch(`${BASE_URL}/me`)
+  if (res.status >= 400) {
+    return 0
+  }
+  const data = await res.text()
+  // число (пока что приходит строка 'user_id=1')
+  return data
+}
+
+export async function getUser(id) {
+  const response = await fetch(`${import.meta.env.VITE_VUE_APP_SERVER}api/users/${id}`)
+  
+  if (response.status === 200) {
+    const data = await response.json()
+    return data
+  }
+  if (response.status === 401) {
+    return false
+  }
+  if (response.status === 500) {
+    return false
+  }
+}
+
 export async function login(user) {
   const res = await fetch(`${BASE_URL}/login`, {
     method: 'POST',
@@ -76,10 +116,7 @@ export async function logout() {
   localStorage.clear()
 }
 
-// export async function getme() {
-// }
-
-// моковый запрос настроек
+// // моковый запрос настроек
 // export async function getSettingsTable() {
 //   return [
 //     {
@@ -169,9 +206,8 @@ export async function logout() {
 //   ]
 // }
 
-// моковый запрос тендеров
+// // моковый запрос тендеров
 // export async function getTenders(start, length) {
-//   const res = await fetch(`${BASE_URL}/api/tenders?start=${start}&length=${length}`)
 //   return {
 //     records_total: 1, records_filtered: 1, data: [
 //       {

@@ -3,7 +3,7 @@
     <div class="table">
       <div class="table__title d-flex justify-space-between">
         <h2 class="text-h4 mb-8">Тендеры</h2>
-        <div class="ml-4">
+        <div class="ml-4" v-if="access.tenders > 1">
           <v-btn 
             @click="openNewTenderModal"
             class="mr-5 mb-2"
@@ -100,6 +100,9 @@
 
 <script>
 import { setSettingsTable, getSettingsTable } from "@/api"
+
+import { mapState } from 'pinia'
+import {useAuthStore} from '@/plugins/store/auth'
 
 import formatToDate from '@/helpers/formatToDate'
 
@@ -227,7 +230,11 @@ export default {
   computed: {
     rows() {
       return [...this.tenders]
-    }
+    },
+
+    ...mapState(useAuthStore, {
+      access: 'access'
+    }),
   },
   watch: {
     rows() {

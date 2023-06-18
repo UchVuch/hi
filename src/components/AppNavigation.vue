@@ -2,7 +2,6 @@
   <v-navigation-drawer
     width="100%"
     v-if="isAuth && $route.name !== 'auth'"
-    v-model="sidebarShow"
     permanent
   >
     <v-list nav width="12vw">
@@ -22,6 +21,7 @@ export default {
   name: 'app-navigation',
   data: () => ({
   }),
+
   computed: {
     ...mapState(useAuthStore, {
       isAuth: 'isAuth'

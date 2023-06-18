@@ -140,7 +140,7 @@
                   <v-col cols="12">
                     <div>
                       <span class="mr-4 line-title">Оборудование</span>
-                      <v-btn color="primary" title="Добавить" @click="addEquipment">
+                      <v-btn color="primary" title="Добавить" @click="addEquipment" v-if="access.tenders > 1">
                         <v-icon size="large" icon="mdi-plus"></v-icon>
                       </v-btn>
                     </div>
@@ -148,8 +148,8 @@
                       <div class="pa-2 d-flex align-center justify-space-between">
                         <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
                         <div class="d-flex ml-4" style="margin-left: auto;">
-                          <v-btn @click="editEqipment(contract.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
-                          <v-btn @click="deleteEqipment(contract.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
+                          <v-btn v-if="access.tenders > 1" @click="editEqipment(contract.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
+                          <v-btn v-if="access.tenders > 2" @click="deleteEqipment(contract.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
                         </div>
                       </div>
                     </template>
@@ -163,7 +163,7 @@
         <v-window-item value="shipment">
           <v-card-text>
           <v-container>
-            <v-row v-if="stage === 0">
+            <v-row v-if="stage === 0 && access.tenders > 1">
               <v-col cols="12">
                 <v-btn
                   color="primary"
@@ -189,7 +189,7 @@
                   <v-col cols="12">
                     <div>
                       <span class="mr-4 line-title">Оборудование</span>
-                      <v-btn color="primary" title="Добавить" @click="addEquipment">
+                      <v-btn color="primary" title="Добавить" @click="addEquipment" v-if="access.tenders > 1">
                         <v-icon size="large" icon="mdi-plus"></v-icon>
                       </v-btn>
                     </div>
@@ -197,8 +197,8 @@
                       <div class="pa-2 d-flex align-center justify-space-between">
                         <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
                         <div class="d-flex ml-4" style="margin-left: auto;">
-                          <v-btn @click="editEqipment(shipment.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
-                          <v-btn @click="deleteEqipment(shipment.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
+                          <v-btn v-if="access.tenders > 1" @click="editEqipment(shipment.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
+                          <v-btn v-if="access.tenders > 2" @click="deleteEqipment(shipment.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
                         </div>
                       </div>
                     </template>
@@ -212,7 +212,7 @@
         <v-window-item value="inspection">
           <v-card-text>
             <v-container>
-            <v-row v-if="stage < 2">
+            <v-row v-if="stage < 2 && access.tenders > 1">
               <v-col cols="12">
                 <v-btn
                   color="primary"
@@ -267,14 +267,14 @@
         <v-btn
           color="primary"
           @click="saveStage"
-          v-if="isNewTender"
+          v-if="isNewTender && access.tenders > 1"
         >
           Создать
         </v-btn>
         <v-btn
           color="primary"
           @click="saveStage"
-          v-else
+          v-if="!isNewTender && access.tenders > 1"
         > 
         Сохранить
       </v-btn>
@@ -288,6 +288,9 @@
 </template>
 
 <script>
+import { mapState } from 'pinia'
+import {useAuthStore} from '@/plugins/store/auth'
+
 import validateDate from '@/helpers/validateDate'
 import currentDate from '@/helpers/currentDate'
 import formatToDate from '@/helpers/formatToDate'
@@ -403,6 +406,12 @@ export default {
         approved: 'Нет',
       },
     }),
+
+    computed: {
+      ...mapState(useAuthStore, {
+        access: 'access'
+      }),
+    },
 
     methods: {
       closeTenderModal() {

@@ -1,5 +1,5 @@
 <template>
-    <div style="padding-left: 14vw; padding-top: 100px; padding-right: 20px;">
+    <div style="padding-left: 14vw; padding-top: 100px; padding-right: 20px;" v-if="access.keys > 1">
       <div>
         <div class="text-h5 font-weight-bold mb-10"
           v-text="'Для генерации ключа введите запрос и нажмите кнопку &quot;Создать&quot;'"
@@ -148,7 +148,6 @@
           class="my-5"
           v-bind:loading="isFetchInProcess"
           v-on:click="submit($event)"
-          v-on:pointerup="clipText($event)"
         >
           Создать
         </v-btn>
@@ -158,7 +157,7 @@
         <v-textarea
           readonly
           auto-grow 
-          v-bind:value="keysText"
+          v-model="keysText"
         >
           <!-- {{keysText}} -->
         </v-textarea>
@@ -181,6 +180,10 @@
 
 <script>
 import { logout } from '../api'
+
+import { mapState } from 'pinia'
+import {useAuthStore} from '@/plugins/store/auth'
+
 
 export default {
     data: () => ({
@@ -216,6 +219,10 @@ export default {
 
         return result
       },
+
+      ...mapState(useAuthStore, {
+        access: 'access'
+      }),
     },
     
     methods: {
@@ -224,10 +231,10 @@ export default {
         console.log(e)
        },
       clipText(e) {
-        console.log(this.keys)
+        // console.log(this.keys)
         
         setTimeout(()=>{
-          console.log(this.keys, 'иЗ КОПИРОВАНИЯ')
+          // console.log(this.keys, 'иЗ КОПИРОВАНИЯ')
           navigator.clipboard.writeText(this.keysText)
         },5) 
       },
@@ -274,10 +281,9 @@ export default {
           
 
           
-          // try {
-          //   navigator.clipboard.writeText(this.keysText)
-          // } catch(e) {}
-
+        
+          navigator.clipboard.writeText(this.keysText)
+          
           this.isFetchSuccess = true
         
 
