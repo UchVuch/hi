@@ -340,7 +340,7 @@ export default {
                 role_id: this.roleNameToId(this.changeUser.roleName),
                 username: this.changeUser.userName,
                 name: this.changeUser.name,
-                password: this.changeUser.password === '******' ? this.changeUser.password : '',
+                password: this.changeUser.password === '******' ? '' :this.changeUser.password,
                 id: 0,
             }
             const response = await fetch(`${import.meta.env.VITE_VUE_APP_SERVER}api/users/${id}`, {
