@@ -1,5 +1,5 @@
 <template>
-    <div style="padding-left: 14vw; padding-top: 100px; padding-right: 20px;" v-if="access.keys > 1">
+    <div style="padding-left: 20px; padding-top: 100px; padding-right: 20px;" v-if="access.keys > 1">
       <div>
         <div class="text-h5 font-weight-bold mb-10"
           v-text="'Для генерации ключа введите запрос и нажмите кнопку &quot;Создать&quot;'"
@@ -40,7 +40,7 @@
 
             <div class="d-flex align-center px-2">
               <v-btn
-                color="error"
+                color="delete"
                 v-bind:disabled="idx === 0"
                 v-on:click="removeNonce(idx)"
               >
@@ -57,7 +57,7 @@
 
           <div class="d-flex align-center px-2">
             <v-btn
-              color="success"
+              color="add-new"
               v-on:click="addNewNonce"
             >
               <v-icon>
@@ -170,7 +170,7 @@
         <v-alert class="alert"
           densemdi-logout
           text
-          v-bind:type="isFetchSuccess ? 'success' : 'error'"
+          v-bind:type="isFetchSuccess ? 'add-new' : 'error'"
         >
           {{ isUnautorized ? 'Неверный пароль!' : isFetchSuccess ? 'Ключ успешно сгенерирован и скопирован в буфер обмена!' : 'Ошибка генерации ключа!' }}
         </v-alert>

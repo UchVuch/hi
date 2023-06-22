@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-left: 14vw; padding-top: 100px;" v-if="access.files > 0">
+  <div style="padding-left: 20px; padding-top: 100px;" v-if="access.files > 0">
     <div class="pt-5 pb-10 pr-5 pl-5">
       <!-- Вывод пути к текущей директории -->
       <div class="row flex-wrap pb-5 ml-0 mr-0 container-fluid">
@@ -26,9 +26,8 @@
               <div class="d-flex flex-wrap mr-0 ml-0 mb-2 mt-0 align-center justify-content-start"
                 v-for="folder of way_frontend">
                 {{folder.name}}
-                <v-icon
-                  color="gray"
-                  >mdi-chevron-right
+                <v-icon color="gray">
+                  mdi-chevron-right
                 </v-icon>
               </div>
       </div>
@@ -229,7 +228,7 @@
 
       <!-- Добавить папку -->
       <v-row class="pt-8 pb-10" v-if="access.files > 1">
-          <v-btn class="mr-4" color="success"
+          <v-btn class="mr-4" color="add-new"
           @click="isCreatingFolder = isCreatingFolder === false ? true : false">
             Добавить папку
           </v-btn>
@@ -330,7 +329,7 @@ export default {
       folders: [],
       files: [],
       way:"dir_0",
-      way_frontend:[{name: ':', id: 0}],
+      way_frontend:[{name: '/', id: 0}],
 
       currentDirId: 0,
       nameNewDir: '',
@@ -354,7 +353,7 @@ export default {
     }),
 
     async mounted() {
-      await this.getDir(this.currentDirId)
+      // await this.getDir(this.currentDirId)
     },
 
     computed: {

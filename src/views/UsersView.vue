@@ -1,5 +1,5 @@
 <template>
-    <div style="padding-left: 14vw; padding-top: 100px;" v-if="access.users > 0">
+    <div style="padding-left: 20px; padding-top: 100px;" v-if="access.users > 0">
         <div class="pt-5 pb-10 pr-5">
             <div class="mt-4 mb-2">
                 <v-row class="folder-line d-flex align-center mb-6 mr-14">
@@ -18,7 +18,6 @@
                             Роль
                         </span>
                     </v-col>
-                    <v-divider></v-divider>
                 </v-row>
             </div>
             <!-- Вывод пользователей -->
@@ -48,7 +47,7 @@
                         mdi-pencil
                     </v-icon>
                     <div v-else style="width:57px"></div>
-                    <v-icon class="ml-3" color="red darken-4" @click="deleteUser(user.id)" v-if="access.users > 2">
+                    <v-icon class="ml-3" color="delete darken-4" @click="deleteUser(user.id)" v-if="access.users > 2">
                         mdi-delete
                     </v-icon>
                     <div v-else style="width:57px"></div>
@@ -100,11 +99,13 @@
             </v-dialog>
 
             <div class="create-user pt-8" v-if="access.users > 1">
-                <v-btn class="mr-4 mb-4" color="success"
-                    @click="this.createUser.createUserForm = this.createUser.createUserForm === true ? false : true">
-                    <v-icon size="24">
-                        mdi-plus-box
-                    </v-icon>
+                <v-btn  
+                  color="add-new"
+                  class="create-user__button" 
+                  @click="this.createUser.createUserForm = this.createUser.createUserForm === true ? false : true">
+                  <v-icon size="24">
+                      mdi-plus-box
+                  </v-icon>
                 </v-btn>
                 <v-form v-if="createUser.createUserForm">
                     <v-card>
@@ -163,8 +164,8 @@ import {useAuthStore} from '@/plugins/store/auth'
 
 export default {
     async mounted() {
-      await this.getRoles()
-      await this.getUsers()
+    //   await this.getRoles()
+    //   await this.getUsers()
     },
 
     computed: {
@@ -413,6 +414,18 @@ export default {
 </script>
 
 <style scoped>
+.folder-line {
+  border-bottom: 1px solid #242424;
+}
+.create-user {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.create-user__button {
+  align-self: flex-end;
+  margin-bottom: 12px;
+}
 #dialogbox {
     display: none;
     position: absolute;

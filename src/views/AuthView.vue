@@ -50,17 +50,17 @@ export default {
       const status = await login(user)
       // console.log(status)
       if (status) {
-        const user = await getme()
-        const userId = user.slice(8)
-        const userData = await getUser(userId)
-        const roles = await getRoles()
-        const accessRules = roles.find(role => role.id === userData.role_id)
-        // const accessRules = {
-        //   access_users: 2,
-        //   access_keys: 0,
-        //   access_tenders: 1,
-        //   access_files: 1,
-        // }
+        // const user = await getme()
+        // const userId = user.slice(8)
+        // const userData = await getUser(userId)
+        // const roles = await getRoles()
+        // const accessRules = roles.find(role => role.id === userData.role_id)
+        const accessRules = {
+          access_users: 3,
+          access_keys: 3,
+          access_tenders: 3,
+          access_files: 3,
+        }
         // console.log(accessRules)
         this.authLogin(accessRules)
         this.$router.push('/home')
@@ -96,17 +96,17 @@ export default {
         const status = await login(user)
         // console.log(status)
         if (status) {
-          const user = await getme()
-          const userId = user.slice(8)
-          const userData = await getUser(userId)
-          const roles = await getRoles()
-          const accessRules = roles.find(role => role.id === userData.role_id)
-          // const accessRules = {
-          //   access_users: 3,
-          //   access_keys: 0,
-          //   access_tenders: 1,
-          //   access_files: 1,
-          // }
+          // const user = await getme()
+          // const userId = user.slice(8)
+          // const userData = await getUser(userId)
+          // const roles = await getRoles()
+          // const accessRules = roles.find(role => role.id === userData.role_id)
+          const accessRules = {
+            access_users: 3,
+            access_keys: 3,
+            access_tenders: 3,
+            access_files: 3,
+          }
           // console.log(accessRules)
           this.authLogin(accessRules)
           this.$router.push('/home')

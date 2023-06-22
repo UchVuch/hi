@@ -14,6 +14,10 @@ const vuetify = createVuetify({
       light: {
         colors: {
           primary: '#304FFE',
+          default: '#fff',
+          'delete': '#F44336',
+          'add-new': '#4caf50',
+          'close-modal': '#1E88E5',
         }
       },
     },
