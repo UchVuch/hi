@@ -47,7 +47,7 @@
                       mdi-pencil
                   </v-icon>
                   <div v-else style="width:57px"></div>
-                  <v-icon class="ml-3" color="delete darken-4" @click="deleteUser(user.id)" v-if="access.users > 2">
+                  <v-icon class="ml-3" color="delete" @click="deleteUser(user.id)" v-if="access.users > 2">
                       mdi-delete
                   </v-icon>
                   <div v-else style="width:57px"></div>
@@ -87,10 +87,10 @@
                       </v-card-text>
                       <v-card-actions>
                           <v-spacer></v-spacer>
-                          <v-btn color="blue darken-1" text @click="closeChangeUserDialog">
+                          <v-btn color="close-modal" text @click="closeChangeUserDialog">
                               Закрыть
                           </v-btn>
-                          <v-btn color="green darken-1" text @click="sendChangeUser">
+                          <v-btn color="primary" text @click="sendChangeUser">
                               Сохранить
                           </v-btn>
                       </v-card-actions>
@@ -137,10 +137,10 @@
                       </v-card-text>
                       <v-card-actions>
                           <v-spacer></v-spacer>
-                          <v-btn color="blue darken-1" text @click="closeCreateUserForm">
+                          <v-btn color="close-modal" text @click="closeCreateUserForm">
                               Отмена
                           </v-btn>
-                          <v-btn color="green darken-1" text @click="sendNewUser">
+                          <v-btn color="add-new" text @click="sendNewUser">
                               Создать
                           </v-btn>
                       </v-card-actions>
