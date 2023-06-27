@@ -91,6 +91,6 @@ export default {
 
 <style scoped>
 .table__wrapper {
-  padding: 0px 35px 30px 14vw;
+  padding: 0px 35px 30px 20px;
 }
 </style>

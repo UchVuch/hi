@@ -1,265 +1,264 @@
 <template>
   <div>
     <v-card style="overflow-y: auto;">
-    <v-card-title>
-      <span class="text-h5" v-if="isNewTender">Новый тендер</span>
-      <span class="text-h5" v-else>Тендер</span>
-    </v-card-title>
-    <v-tabs v-model="tab" fixed-tabs>
-      <v-tab value="contract"> <v-icon class="mr-2" size="large" icon="mdi-check-circle" title="Этап активен" color="green"></v-icon> Подписание</v-tab>
-      <v-tab value="shipment"> 
-        <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 0" title="Этап активен" color="green"></v-icon> 
-        <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
-        Отгрузка
-      </v-tab>
-      <v-tab value="inspection">
-        <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 1" title="Этап активен" color="green"></v-icon> 
-        <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
-        Приемка
-      </v-tab>
-    </v-tabs>
-    <v-window v-model="tab" style="overflow-y: auto; height: 75vh;">
-        <v-window-item value="contract">
-          <v-card-text>
-            <v-container>
-              <v-form ref="form1">
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="contract.seller_name"
-                      label="Имя продавца"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="contract.customer_name"
-                      label="Имя клиента"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="contract.number"
-                      label="Номер договора"
-                      hint="Укажите целое число"
-                      :rules="notDecimal"
-                      persistent-hint
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="contract.date"
-                      :rules="isValidDate"
-                      label="Дата"
-                      hint="Дата в формате дд.мм.гггг — 02.06.2023"
-                      persistent-hint
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12">
-                    <p class="line-title">Условия</p>
-                    <v-row>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.terms.date"
-                          :rules="isValidDate"
-                          label="Дата"
-                          hint="Дата в формате дд.мм.гггг — 02.06.2023"
-                          persistent-hint
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.terms.note"
-                          label="Примечание"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col cols="12">
-                    <p class="line-title">Контракт</p>
-                    <v-row>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.procuring.contract.amount"
-                          label="Сумма"
-                          hint="Десятичные значения указываются через точку, например 350.05"
-                          persistent-hint
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.procuring.contract.date"
-                          :rules="isValidDate"
-                          label="Дата"
-                          hint="Дата в формате дд.мм.гггг — 02.06.2023"
-                          persistent-hint
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col cols="12">
-                    <p class="line-title">Гарантия</p>
-                    <v-row>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.procuring.guarantee.amount"
-                          label="Сумма"
-                          hint="Десятичные значения указываются через точку, например 350.05"
-                          persistent-hint
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.procuring.guarantee.date"
-                          :rules="isValidDate"
-                          label="Дата"
-                          hint="Дата в формате дд.мм.гггг — 02.06.2023"
-                          persistent-hint
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col cols="12">
-                    <p class="line-title">Адреcа и контакты</p>
-                    <v-row>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.addresses"
-                          label="Адрес"
-                          persistent-hint
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="6">
-                        <v-text-field
-                          v-model="contract.contacts"
-                          label="Контакт"
-                          persistent-hint
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                  <v-col cols="12">
-                    <div>
-                      <span class="mr-4 line-title">Оборудование</span>
-                      <v-btn color="primary" title="Добавить" @click="addEquipment" v-if="access.tenders > 1">
-                        <v-icon size="large" icon="mdi-plus"></v-icon>
-                      </v-btn>
-                    </div>
-                    <template v-for="item in contract.equipment">
-                      <div class="pa-2 d-flex align-center justify-space-between">
-                        <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
-                        <div class="d-flex ml-4" style="margin-left: auto;">
-                          <v-btn v-if="access.tenders > 1" @click="editEqipment(contract.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
-                          <v-btn v-if="access.tenders > 2" @click="deleteEqipment(contract.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
-                        </div>
+      <v-card-title>
+        <span class="text-h5" v-if="isNewTender">Новый тендер</span>
+        <span class="text-h5" v-else>Тендер</span>
+      </v-card-title>
+      <v-tabs v-model="tab" fixed-tabs>
+        <v-tab value="contract"> <v-icon class="mr-2" size="large" icon="mdi-check-circle" title="Этап активен" color="success"></v-icon> Подписание</v-tab>
+        <v-tab value="shipment"> 
+          <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 0" title="Этап активен" color="success"></v-icon> 
+          <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
+          Отгрузка
+        </v-tab>
+        <v-tab value="inspection">
+          <v-icon class="mr-2" size="large" icon="mdi-check-circle" width="30" v-if="stage > 1" title="Этап активен" color="success"></v-icon> 
+          <v-icon class="mr-2" size="large" icon="mdi-minus-circle" v-else title="Этап неактивен" color="error"></v-icon> 
+          Приемка
+        </v-tab>
+      </v-tabs>
+      <v-window v-model="tab" style="overflow-y: auto; height: 75vh;">
+          <v-window-item value="contract">
+            <v-card-text>
+              <v-container>
+                <v-form ref="form1">
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="contract.seller_name"
+                        label="Имя продавца"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="contract.customer_name"
+                        label="Имя клиента"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="contract.number"
+                        label="Номер договора"
+                        hint="Укажите целое число"
+                        :rules="notDecimal"
+                        persistent-hint
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="contract.date"
+                        :rules="isValidDate"
+                        label="Дата"
+                        hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                        persistent-hint
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <p class="line-title">Условия</p>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.terms.date"
+                            :rules="isValidDate"
+                            label="Дата"
+                            hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.terms.note"
+                            label="Примечание"
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <p class="line-title">Контракт</p>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.procuring.contract.amount"
+                            label="Сумма"
+                            hint="Десятичные значения указываются через точку, например 350.05"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.procuring.contract.date"
+                            :rules="isValidDate"
+                            label="Дата"
+                            hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <p class="line-title">Гарантия</p>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.procuring.guarantee.amount"
+                            label="Сумма"
+                            hint="Десятичные значения указываются через точку, например 350.05"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.procuring.guarantee.date"
+                            :rules="isValidDate"
+                            label="Дата"
+                            hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <p class="line-title">Адреcа и контакты</p>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.addresses"
+                            label="Адрес"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="contract.contacts"
+                            label="Контакт"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <v-col cols="12">
+                      <div>
+                        <span class="mr-4 line-title">Оборудование</span>
+                        <v-btn color="primary" title="Добавить" @click="addEquipment" v-if="access.tenders > 1">
+                          <v-icon size="large" icon="mdi-plus"></v-icon>
+                        </v-btn>
                       </div>
-                    </template>
-                  </v-col>
-                </v-row>
+                      <template v-for="item in contract.equipment">
+                        <div class="pa-2 d-flex align-center justify-space-between">
+                          <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
+                          <div class="d-flex ml-4" style="margin-left: auto;">
+                            <v-btn v-if="access.tenders > 1" @click="editEqipment(contract.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
+                            <v-btn v-if="access.tenders > 2" @click="deleteEqipment(contract.equipment.indexOf(item))" color="delete" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
+                          </div>
+                        </div>
+                      </template>
+                    </v-col>
+                  </v-row>
+                </v-form>
+              </v-container>
+            </v-card-text>
+          </v-window-item>
+
+          <v-window-item value="shipment">
+            <v-card-text>
+            <v-container>
+              <v-row v-if="stage === 0 && access.tenders > 1">
+                <v-col cols="12">
+                  <v-btn
+                    color="primary"
+                    variant="text"
+                    block
+                    @click="stage = 1"
+                  >
+                    Начать этап
+                  </v-btn>
+              </v-col>
+              </v-row>
+              <v-form ref="form2" v-if="stage > 0">
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="shipment.date"
+                        :rules="isValidDate"
+                        label="Дата"
+                        hint="Дата в формате дд.мм.гггг — 02.06.2023"
+                        persistent-hint
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <div>
+                        <span class="mr-4 line-title">Оборудование</span>
+                        <v-btn color="primary" title="Добавить" @click="addEquipment" v-if="access.tenders > 1">
+                          <v-icon size="large" icon="mdi-plus"></v-icon>
+                        </v-btn>
+                      </div>
+                      <template v-for="item in shipment.equipment">
+                        <div class="pa-2 d-flex align-center justify-space-between">
+                          <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
+                          <div class="d-flex ml-4" style="margin-left: auto;">
+                            <v-btn v-if="access.tenders > 1" @click="editEqipment(shipment.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
+                            <v-btn v-if="access.tenders > 2" @click="deleteEqipment(shipment.equipment.indexOf(item))" color="delete" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
+                          </div>
+                        </div>
+                      </template>
+                    </v-col>  
+                  </v-row>
               </v-form>
             </v-container>
           </v-card-text>
-        </v-window-item>
+          </v-window-item>
 
-        <v-window-item value="shipment">
-          <v-card-text>
-          <v-container>
-            <v-row v-if="stage === 0 && access.tenders > 1">
-              <v-col cols="12">
-                <v-btn
-                  color="primary"
-                  variant="text"
-                  block
-                  @click="stage = 1"
-                >
-                  Начать этап
-                </v-btn>
-            </v-col>
-            </v-row>
-            <v-form ref="form2" v-if="stage > 0">
-                <v-row>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="shipment.date"
-                      :rules="isValidDate"
-                      label="Дата"
-                      hint="Дата в формате дд.мм.гггг — 02.06.2023"
-                      persistent-hint
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12">
-                    <div>
-                      <span class="mr-4 line-title">Оборудование</span>
-                      <v-btn color="primary" title="Добавить" @click="addEquipment" v-if="access.tenders > 1">
-                        <v-icon size="large" icon="mdi-plus"></v-icon>
-                      </v-btn>
-                    </div>
-                    <template v-for="item in shipment.equipment">
-                      <div class="pa-2 d-flex align-center justify-space-between">
-                        <div class="text-h6">{{item?.name}} {{item?.variation}}<span v-if="item.price || item.count"> — {{item?.price}} руб / {{item?.count }} шт</span></div>
-                        <div class="d-flex ml-4" style="margin-left: auto;">
-                          <v-btn v-if="access.tenders > 1" @click="editEqipment(shipment.equipment.indexOf(item), item)" color="primary" title="Изменить"><v-icon icon="mdi-pencil"></v-icon></v-btn>
-                          <v-btn v-if="access.tenders > 2" @click="deleteEqipment(shipment.equipment.indexOf(item))" color="red" title="Удалить" class="ml-2"><v-icon icon="mdi-delete"></v-icon></v-btn>
-                        </div>
-                      </div>
-                    </template>
-                  </v-col>  
-                </v-row>
-            </v-form>
-          </v-container>
-        </v-card-text>
-        </v-window-item>
-
-        <v-window-item value="inspection">
-          <v-card-text>
-            <v-container>
-            <v-row v-if="stage < 2 && access.tenders > 1">
-              <v-col cols="12">
-                <v-btn
-                  color="primary"
-                  variant="text"
-                  block
-                  @click="stage = 2"
-                >
-                  Начать этап
-                </v-btn>
-            </v-col>
-            </v-row>
-            <v-form ref="form2" v-if="stage > 1">
-                <v-row>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="inspection.penalties"
-                      label="Штрафы"
-                      hint="Десятичные значения указываются через точку, например 350.05"
-                      persistent-hint
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-text-field
-                      v-model="inspection.payment"
-                      label="Оплата"
-                      hint="Десятичные значения указываются через точку, например 350.05"
-                      persistent-hint
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <v-select
-                      v-model="inspection.approved"
-                      :items="['Да', 'Нет']"
-                      label="Одобрено — Да/Нет"
-                    ></v-select>
-                  </v-col>
-                </v-row>
-            </v-form>
-          </v-container>
-          </v-card-text>
-        </v-window-item>
+          <v-window-item value="inspection">
+            <v-card-text>
+              <v-container>
+              <v-row v-if="stage < 2 && access.tenders > 1">
+                <v-col cols="12">
+                  <v-btn
+                    color="primary"
+                    variant="text"
+                    block
+                    @click="stage = 2"
+                  >
+                    Начать этап
+                  </v-btn>
+              </v-col>
+              </v-row>
+              <v-form ref="form2" v-if="stage > 1">
+                  <v-row>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="inspection.penalties"
+                        label="Штрафы"
+                        hint="Десятичные значения указываются через точку, например 350.05"
+                        persistent-hint
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        v-model="inspection.payment"
+                        label="Оплата"
+                        hint="Десятичные значения указываются через точку, например 350.05"
+                        persistent-hint
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                      <v-select
+                        v-model="inspection.approved"
+                        :items="['Да', 'Нет']"
+                        label="Одобрено — Да/Нет"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+              </v-form>
+            </v-container>
+            </v-card-text>
+          </v-window-item>
       </v-window>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-          color="blue-darken-1"
-          variant="text"
+          color="close-modal"
           @click="closeTenderModal"
         >
           Закрыть

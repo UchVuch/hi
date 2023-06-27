@@ -7,20 +7,21 @@
           <v-btn 
             @click="openNewTenderModal"
             class="mr-5 mb-2"
-            color="primary"
+            color="add-new"
           >
-            Добавить тендер
+          <v-icon icon="mdi-plus"></v-icon>
           </v-btn>
           <v-btn 
             v-if="!isTableEdit"
             @click="startEditTable"
             class="mb-2"
+            color="default"
           >
-            Редактировать
+            <v-icon icon="mdi-cog"></v-icon>
           </v-btn>
         </div>
       </div>
-      <v-table fixed-header>
+      <v-table fixed-header style="border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));">
       <thead>
         <tr>
           <th class="text-left" v-for="column in selectedColumns" :key="column.id">
@@ -55,7 +56,7 @@
         <!-- <v-btn class="w-100" @click="cancelEditTable">Отменить изменения</v-btn> -->
         <v-row class="mt-2">
           <v-col cols="5">
-            <v-btn @click="endEditTable">Назад</v-btn>
+            <v-btn color="default" @click="endEditTable">Назад</v-btn>
           </v-col>
           <v-col cols="7">
             <v-btn color="primary w-100" @click="selectColumnsNames">Сохранить</v-btn>
@@ -427,11 +428,11 @@ td div {
   padding-bottom: 10px;
 }
 
-.v-table .v-table__wrapper > table > tbody > tr > td {
+.v-table .v-table__wrapper > table > tbody > tr > td:not(:first-child) {
   border-left: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
-.v-table.v-table--fixed-header > .v-table__wrapper > table > thead > tr > th {
+.v-table.v-table--fixed-header > .v-table__wrapper > table > thead > tr > th:not(:first-child) {
   border-left: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 </style>

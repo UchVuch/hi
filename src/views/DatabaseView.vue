@@ -1,10 +1,99 @@
 <template>
-  <div style="padding-left: 14vw; padding-top: 100px;" v-if="access.files > 0">
-    <div class="pt-5 pb-10 pr-5 pl-5">
+  <div style="padding-left: 20px; padding-top: 100px;" v-if="access.files > 0">
+    <div class="pt-5 pb-10 pr-5">
+
+      <!-- Добавить папку или файл-->
+      <div class="pt-8 pb-10" v-if="access.files > 1">
+          <div class="d-flex justify-end align-center w-100">
+              <v-btn class="mr-4" color="add-new"
+                  @click="startCreateDir"
+              >
+                  <v-icon icon="mdi-plus"></v-icon>
+                  <v-icon icon="mdi-folder"></v-icon>
+              </v-btn>
+      
+              <div>
+                  <div class="input-group">
+                      <v-btn 
+                      color="add-new"
+                      v-on:click="chooseFiles"
+                      >
+                      <v-icon icon="mdi-plus"></v-icon>
+                      <v-icon icon="mdi-file"></v-icon>
+                      </v-btn>
+                      <input style="display:none" v-on:change="filesPicked" id="fileinput" type="file" multiple />
+                  <!--label style="background-color:lightblue" for="file">Нажмите для выбора файла</label-->
+                      
+                  </div>
+              </div>
+          </div>
+          
+          <v-dialog
+              v-model="isFileLoading"
+              hide-overlay
+              persistent
+              width="300"
+          >
+              <v-card
+              color="primary"
+              dark
+              >
+              <v-card-text>
+                  Загрузка
+                  <v-progress-linear
+                  indeterminate
+                  color="white"
+                  class="mb-0"
+                  ></v-progress-linear>
+              </v-card-text>
+              </v-card>
+          </v-dialog>
+      
+          <div class="mt-6">
+              <div v-if="isCreatingFolder || isUploading" @click="closeCreatingFields" style="cursor: pointer; display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <v-icon icon="mdi-arrow-up-drop-circle-outline">
+                </v-icon>Скрыть</div>
+              <div class="d-flex flex-column align-end" v-if="isUploading">
+                  <div id="fileinputlabel">
+                      {{getUploadingFilesLabel()}}
+                  </div>
+                  <v-row class="mt-2">
+                      <v-btn
+                          color="primary" 
+                          :disabled="uploadingFiles.length===0"
+                          v-on:click="sendFiles"
+                      >
+                          Добавить
+                      </v-btn>
+                  </v-row>
+              </div>
+
+              <div class="d-flex flex-column align-end" v-if="isCreatingFolder">
+                  <div class="mb-2 w-100">
+                      <v-text-field 
+                          label="Название папки"
+                          hide-details
+                          v-model="nameNewDir"
+                          v-on:keyup.enter="createDir"
+                      ></v-text-field>
+                  </div>
+                  <div>
+                      <v-btn
+                          color="primary"
+                          @click="createDir"
+                      >
+                          Создать папку
+                      </v-btn>
+                  </div>
+              </div>
+          </div>
+      </div>
+
       <!-- Вывод пути к текущей директории -->
-      <div class="row flex-wrap pb-5 ml-0 mr-0 container-fluid">
-            <div class="flex-nowrap align-center ml-0 col-2 pl-0 mr-4"
-            v-if="way_frontend.length > 1"
+      <div class="row flex-wrap pb-5 ml-0 mr-0 container-fluid" v-if="way_frontend.length > 1">
+            <div 
+              class="flex-nowrap align-center ml-0 col-2 pl-0 mr-4"
+              v-if="way_frontend.length > 1"
             >
                 <v-btn class="pl-3 pr-3"
                 color="primary" 
@@ -26,16 +115,15 @@
               <div class="d-flex flex-wrap mr-0 ml-0 mb-2 mt-0 align-center justify-content-start"
                 v-for="folder of way_frontend">
                 {{folder.name}}
-                <v-icon
-                  color="gray"
-                  >mdi-chevron-right
+                <v-icon color="gray">
+                  mdi-chevron-right
                 </v-icon>
               </div>
       </div>
 
       <!-- Вывод содержимого текущей директории-->
       <div class="pb-1 pt-1 text-center mt-4 mb-2"
-      v-if="files.length === 0 && folders.length === 0">
+          v-if="files.length === 0 && folders.length === 0">
         Пусто
       </div>
       <div class="mt-4 mb-2" v-else>
@@ -227,88 +315,6 @@
         </v-dialog>
       </div>
 
-      <!-- Добавить папку -->
-      <v-row class="pt-8 pb-10" v-if="access.files > 1">
-          <v-btn class="mr-4" color="success"
-          @click="isCreatingFolder = isCreatingFolder === false ? true : false">
-            Добавить папку
-          </v-btn>
-          <v-col v-if="isCreatingFolder">
-            
-            <v-row class="d-flex align-center">
-              <v-text-field 
-              label="Название папки"
-              hide-details
-              v-model="nameNewDir"
-              v-on:keyup.enter="createDir"
-              ></v-text-field>
-              <v-btn class="ml-2"
-              color="green darken-1"
-              @click="createDir">
-                Создать папку
-              </v-btn>
-            </v-row>
-            
-          </v-col>
-        </v-row>
-      
-
-      <!-- Добавление новых файлов -->
-      <div class="container mt-8" v-if="access.files > 1">
-
-        <div class="text-center pb-5">
-          <h1>Добавить файлы</h1>
-        </div>
-
-        <form 
-        id="form" 
-        enctype="multipart/form-data">
-          <v-row class="align-center" justify="space-around">
-              <div class="input-group">
-                  <v-btn 
-                  color="primary"
-                  v-on:click="chooseFiles"
-                  >
-                    Выбрать
-                  </v-btn>
-
-
-                  <input style="display:none" v-on:change="filesPicked" id="fileinput" type="file" multiple />
-                <!--label style="background-color:lightblue" for="file">Нажмите для выбора файла</label-->
-                  
-              </div>
-              <div id="fileinputlabel">
-                {{getUploadingFilesLabel()}}
-              </div>
-              <v-btn  
-                :disabled="uploadingFiles.length===0"
-                color="primary" v-on:click="sendFiles">
-                Добавить
-              </v-btn>
-          </v-row>
-        </form>
-        <v-dialog
-          v-model="isFileLoading"
-          hide-overlay
-          persistent
-          width="300"
-        >
-          <v-card
-            color="primary"
-            dark
-          >
-            <v-card-text>
-              Загрузка
-              <v-progress-linear
-                indeterminate
-                color="white"
-                class="mb-0"
-              ></v-progress-linear>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
-      </div>
-
     </div>
     <div id="dialogbox" class="slit-in-vertical">
         <div>
@@ -330,7 +336,7 @@ export default {
       folders: [],
       files: [],
       way:"dir_0",
-      way_frontend:[{name: ':', id: 0}],
+      way_frontend:[{name: '/', id: 0}],
 
       currentDirId: 0,
       nameNewDir: '',
@@ -346,24 +352,32 @@ export default {
       captionDialog: false,
       nameCaption: '',
       infoCaption: '',
-
+      
+      access: {
+          files: 3
+      },
       isAdmin: true,
+      isUploading: false,
       isFileLoading: false,
       isCreatingFolder: false,
       errorDescription: '',
     }),
 
     async mounted() {
-      await this.getDir(this.currentDirId)
+      // await this.getDir(this.currentDirId)
     },
 
-    computed: {
-      ...mapState(useAuthStore, {
-        access: 'access'
-      }),
-    },
+  //   computed: {
+  //     ...mapState(useAuthStore, {
+  //       access: 'access'
+  //     }),
+  //   },
     
     methods: {
+      closeCreatingFields() {
+        this.isUploading = false
+        this.isCreatingFolder = false
+      },
       // путь до текущей директории/папки
       async setWayFolder(folderId,folderName) {
         if(folderId<0){
@@ -494,6 +508,10 @@ export default {
           this.customAlert(this.errorDescription)
         }
       },
+      startCreateDir() {
+          this.isUploading = false
+          this.isCreatingFolder = true
+      },
       async createDir() {
         this.currentDirId = Number(this.way.slice(4))
 
@@ -584,6 +602,8 @@ export default {
       },
       //загрузка новых файлов
       chooseFiles() {
+          this.isCreatingFolder = false
+          this.isUploading = true
         document.getElementById("fileinput").click()
       },
       filesPicked() {
@@ -664,6 +684,7 @@ export default {
         document.getElementById('fileinput').setAttribute("value",null)
         document.getElementById('fileinputlabel').nodeValue="Не выбрано"
         this.uploadingFiles=[]
+        this.isUploading = false
       },
 
       customAlert(message) {

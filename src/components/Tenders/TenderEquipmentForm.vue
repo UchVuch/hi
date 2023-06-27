@@ -27,8 +27,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
             <v-btn
-              color="blue-darken-1"
-              variant="text"
+              color="close-modal"
               @click="closeEditEquipment"
             >
               Закрыть
