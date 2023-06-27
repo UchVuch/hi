@@ -1,13 +1,13 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL
 
-// export async function getTenders(start, length) {
-//   const res = await fetch(`${BASE_URL}/api/tenders?start=${start}&length=${length}`)
-//   if (res.status >= 400) {
-//     return false
-//   }
-//   const data = await res.json()
-//   return data
-// }
+export async function getTenders(start, length) {
+  const res = await fetch(`${BASE_URL}/api/tenders?start=${start}&length=${length}`)
+  if (res.status >= 400) {
+    return false
+  }
+  const data = await res.json()
+  return data
+}
 
 export async function putTender(tender, id) {
   const res = await fetch(`${BASE_URL}/api/tenders/${id}`, {
@@ -39,15 +39,15 @@ export async function setSettingsTable(settings) {
   })
 }
 
-// export async function getSettingsTable() {
-//   const res = await fetch(`${BASE_URL}/api/tenders/table_settings`)
-//   if (res.status >= 400) {
-//     return false
-//   }
-//   const data = await res.json()
-//   // ожидаю внутри массив
-//   return data
-// }
+export async function getSettingsTable() {
+  const res = await fetch(`${BASE_URL}/api/tenders/table_settings`)
+  if (res.status >= 400) {
+    return false
+  }
+  const data = await res.json()
+  // ожидаю внутри массив
+  return data
+}
 
 export async function getRoles() {
   const response = await fetch(`${import.meta.env.VITE_VUE_APP_SERVER}api/roles`)
@@ -98,9 +98,9 @@ export async function login(user) {
     }
   }).catch((error) => ("Something went wrong!", error))
 
-  // if( res.status >= 400 ) {
-  //   return false
-  // }
+  if( res.status >= 400 ) {
+    return false
+  }
 
   localStorage.setItem('username', user.username)
   localStorage.setItem('password', user.password)
@@ -116,186 +116,186 @@ export async function logout() {
   localStorage.clear()
 }
 
-// моковый запрос настроек
-export async function getSettingsTable() {
-  return [
-    {
-      name: 'contract_seller_name',
-      value: 'Имя продавца',
-      hidden: true,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_customer_name',
-      value: 'Имя клиента',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_procuring',
-      value: 'Контракт',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_equipment',
-      value: 'Оборудование в контракте',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_number',
-      value: 'Номер договора',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_date',
-      value: 'Дата контракта',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_terms',
-      value: 'Условия контракта',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_addresses',
-      value: 'Адреса',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_contacts',
-      value: 'Контакты',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'shipment_date',
-      value: 'Дата отгрузки',
-      hidden: false,
-      stage: 'shipment',
-    },
-    {
-      name: 'shipment_equipment',
-      value: 'Отгрузка оборудования',
-      hidden: false,
-      stage: 'shipment',
-    },
-    {
-      name: 'inspection_payment',
-      value: 'Оплата',
-      hidden: false,
-      stage: 'inspection',
-    },
-    {
-      name: 'inspection_penalties',
-      value: 'Штраф',
-      hidden: false,
-      stage: 'inspection',
-    },
-    {
-      name: 'inspection_approved',
-      value: 'Одобрено',
-      hidden: false,
-      stage: 'inspection',
-    },
-  ]
-}
+// // моковый запрос настроек
+// export async function getSettingsTable() {
+//   return [
+//     {
+//       name: 'contract_seller_name',
+//       value: 'Имя продавца',
+//       hidden: true,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_customer_name',
+//       value: 'Имя клиента',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_procuring',
+//       value: 'Контракт',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_equipment',
+//       value: 'Оборудование в контракте',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_number',
+//       value: 'Номер договора',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_date',
+//       value: 'Дата контракта',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_terms',
+//       value: 'Условия контракта',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_addresses',
+//       value: 'Адреса',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'contract_contacts',
+//       value: 'Контакты',
+//       hidden: false,
+//       stage: 'contract',
+//     },
+//     {
+//       name: 'shipment_date',
+//       value: 'Дата отгрузки',
+//       hidden: false,
+//       stage: 'shipment',
+//     },
+//     {
+//       name: 'shipment_equipment',
+//       value: 'Отгрузка оборудования',
+//       hidden: false,
+//       stage: 'shipment',
+//     },
+//     {
+//       name: 'inspection_payment',
+//       value: 'Оплата',
+//       hidden: false,
+//       stage: 'inspection',
+//     },
+//     {
+//       name: 'inspection_penalties',
+//       value: 'Штраф',
+//       hidden: false,
+//       stage: 'inspection',
+//     },
+//     {
+//       name: 'inspection_approved',
+//       value: 'Одобрено',
+//       hidden: false,
+//       stage: 'inspection',
+//     },
+//   ]
+// }
 
-// моковый запрос тендеров
-export async function getTenders(start, length) {
-  return {
-    records_total: 1, records_filtered: 1, data: [
-      {
-        id: 1,
-        contract: {
-          seller_name: 'name1',
-          customer_name: 'name2',
-          procuring: {
-            contract: { amount: 0, date: 1674651234 },
-            guarantee: { amount: 3452.43, date: 1674651234 },
-          },
-          equipment: [
-            {
-              name: "equip0",
-              count: 2,
-              price: 3555.33,
-              variation: "variation3",
-            },
-            {
-              name: "equip1",
-              count: 22,
-              price: 345.33,
-              variation: "variation1",
-            }
-          ],
-          number: 431,
-          date: 1684454400,
-          terms: {
-            date: 1684454400,
-            note: "text",
-          },
-          addresses: ["Адерс 1"],
-          contacts: ["Контакт 1"],
-        },
-        shipment: null,
-        inspection: null,
-      },
-      {
-        id: 2,
-        contract: {
-          seller_name: 'name3',
-          customer_name: 'name4',
-          procuring: {
-            contract: { amount: 0, date: 1674651234 },
-            guarantee: { amount: 3452.43, date: 1674651234 },
-          },
-          equipment: [
-            {
-              name: "equip0",
-              count: 2,
-              price: 3555.33,
-              variation: "variation3",
-            },
-            {
-              name: "equip1",
-              count: 22,
-              price: 345.33,
-              variation: "variation1",
-            }
-          ],
-          number: 431,
-          date: 1684454400,
-          terms: {
-            date: 1684454400,
-            note: "text",
-          },
-          addresses: ["Адерс 1"],
-          contacts: ["Контакт 1"],
-        },
-        shipment: {
-          date:1684454400,
-          equipment: [
-            {
-              name: "equip3",
-              count: 2,
-              price: 3555.33,
-              variation: "variation3",
-            },
-            {
-              name: "equip4",
-              count: 22,
-              price: 345.33,
-              variation: "variation1",
-            }
-          ],
-        },
-        inspection: null,
-      },
-    ]
-  }
-}
+// // моковый запрос тендеров
+// export async function getTenders(start, length) {
+//   return {
+//     records_total: 1, records_filtered: 1, data: [
+//       {
+//         id: 1,
+//         contract: {
+//           seller_name: 'name1',
+//           customer_name: 'name2',
+//           procuring: {
+//             contract: { amount: 0, date: 1674651234 },
+//             guarantee: { amount: 3452.43, date: 1674651234 },
+//           },
+//           equipment: [
+//             {
+//               name: "equip0",
+//               count: 2,
+//               price: 3555.33,
+//               variation: "variation3",
+//             },
+//             {
+//               name: "equip1",
+//               count: 22,
+//               price: 345.33,
+//               variation: "variation1",
+//             }
+//           ],
+//           number: 431,
+//           date: 1684454400,
+//           terms: {
+//             date: 1684454400,
+//             note: "text",
+//           },
+//           addresses: ["Адерс 1"],
+//           contacts: ["Контакт 1"],
+//         },
+//         shipment: null,
+//         inspection: null,
+//       },
+//       {
+//         id: 2,
+//         contract: {
+//           seller_name: 'name3',
+//           customer_name: 'name4',
+//           procuring: {
+//             contract: { amount: 0, date: 1674651234 },
+//             guarantee: { amount: 3452.43, date: 1674651234 },
+//           },
+//           equipment: [
+//             {
+//               name: "equip0",
+//               count: 2,
+//               price: 3555.33,
+//               variation: "variation3",
+//             },
+//             {
+//               name: "equip1",
+//               count: 22,
+//               price: 345.33,
+//               variation: "variation1",
+//             }
+//           ],
+//           number: 431,
+//           date: 1684454400,
+//           terms: {
+//             date: 1684454400,
+//             note: "text",
+//           },
+//           addresses: ["Адерс 1"],
+//           contacts: ["Контакт 1"],
+//         },
+//         shipment: {
+//           date:1684454400,
+//           equipment: [
+//             {
+//               name: "equip3",
+//               count: 2,
+//               price: 3555.33,
+//               variation: "variation3",
+//             },
+//             {
+//               name: "equip4",
+//               count: 22,
+//               price: 345.33,
+//               variation: "variation1",
+//             }
+//           ],
+//         },
+//         inspection: null,
+//       },
+//     ]
+//   }
+// }
