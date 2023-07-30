@@ -150,7 +150,7 @@
             </span>
           </v-btn>
           <v-icon class="ml-3" 
-          color="red darken-4"
+          color="delete"
           @click="deleteDir(folder.id)"
           v-if="access.files > 2">
             mdi-delete
@@ -170,7 +170,7 @@
                 :download="file.name" 
                 :href="`/api/files/${file.id}`">
                   <v-icon 
-                    color="green" 
+                    color="add-new" 
                     size="24"
                     class="pa-0 mr-3"
                     >
@@ -187,7 +187,7 @@
                   mdi-information
                 </v-icon>
                 <v-icon class="ml-3"
-                color="red darken-4"
+                color="delete"
                 @click="deleteFile(file.id)"
                 v-if="access.files > 2">
                   mdi-delete

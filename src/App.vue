@@ -11,13 +11,21 @@ import AppNavigation from './components/AppNavigation.vue'
 
 export default {
   components: { AppBar, AppNavigation },
+
     mounted() {
       this.$router.push('/')
       console.log(this.name)
     },
+
     data: () => ({
-        sidebarShow: true,
+        sidebarShow: false,
     }),
+
+    watch:{
+    $route (to, from){
+      if (this.$route.name === 'home') this.sidebarShow = false
+    }
+} 
 }
 </script>
 <style scoped>

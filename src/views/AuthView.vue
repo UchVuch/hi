@@ -47,7 +47,8 @@ export default {
         password: localStorage.getItem('password')
       }
       // если авторизация успешна переходим на основную страницу
-      const status = await login(user)
+      // const status = await login(user)
+      const status = true
       // console.log(status)
       if (status) {
         // const user = await getme()

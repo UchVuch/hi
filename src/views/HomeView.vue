@@ -1,15 +1,8 @@
 <template>
   <div class="d-flex h-100" style="padding-top: 30vh;" v-if="access.tenders > 0">
     <div class="table__wrapper w-100">
-      <TendersTable @editTender="openTenderModal" @createTender="openNewTenderModal" @change="changePage" :tenders="currentTenders" :totalPages="totalPages" :page="page"/>
-      <!-- <v-alert
-        style="position: absolute; top: 60px; right: 20px; z-index: 5000;"
-        v-model="alert"
-        type="error"
-        title="Нельзя начать новый этап"
-        text="Чтобы начать новый этап, заполните все поля предыдущего"
-      >
-      </v-alert> -->
+      <TendersTable @editTender="openTenderModal" @createTender="openNewTenderModal" @change="changePage" @search="searchTenders" 
+      :tenders="currentTenders" :totalPages="totalPages" :totalTenders="totalTenders" :page="page" :length="length"/>
     </div>
 
     <v-dialog v-model="tenderModal">
@@ -39,6 +32,7 @@ export default {
     length: 10,
     page: 1,
     totalPages: 0,
+    totalTenders: 0,
     currentTender: {},
     tenders: []
   }),
@@ -53,6 +47,9 @@ export default {
   }, 
 
   methods: {
+    async searchTenders(searchText) {
+      await this.getCurrentTenders(searchText)
+    },
     openTenderModal(item) {
       console.log(item)
       this.currentTender = {...item}
@@ -79,9 +76,10 @@ export default {
       await this.getCurrentTenders()
       this.tenderModal = false
     },
-    async getCurrentTenders() {
-      const { records_total: totalTenders, records_filtered, data } = await getTenders(this.start, this.length)
-      this.totalPages = Math.ceil( totalTenders / this.length )
+    async getCurrentTenders(serchText = '') {
+      const { records_total, records_filtered, data } = await getTenders(this.start, this.length, serchText)
+      this.totalTenders = records_filtered
+      this.totalPages = Math.ceil( this.totalTenders / this.length )
       this.tenders = [...data]
     },
   },

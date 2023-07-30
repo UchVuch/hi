@@ -1,9 +1,11 @@
 <template>
   <div class="d-flex justify-space-between">
     <div class="table">
+      
       <div class="table__title d-flex justify-space-between">
         <h2 class="text-h4 mb-8">Тендеры</h2>
-        <div class="ml-4" v-if="access.tenders > 1">
+        <div class="d-flex ml-4" v-if="access.tenders > 1">
+          <download-exel-buttons :search="lastSearch" :page="page" :length="length" :totalTenders="totalTenders" :columns="exportColumns"/>
           <v-btn 
             @click="openNewTenderModal"
             class="mr-5 mb-2"
@@ -20,6 +22,18 @@
             <v-icon icon="mdi-cog"></v-icon>
           </v-btn>
         </div>
+      </div>
+      <div class="d-flex pr-2">
+        <v-text-field
+          v-model="searchText"
+          label="Поиск по тендерам"
+          clearable
+          hide-details
+          class="mb-8 mr-4"
+        ></v-text-field>
+        <v-btn @click="searchTenders">
+          Поиск
+        </v-btn>
       </div>
       <v-table fixed-header style="border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));">
       <thead>
@@ -108,9 +122,10 @@ import {useAuthStore} from '@/plugins/store/auth'
 import formatToDate from '@/helpers/formatToDate'
 
 import Draggable  from "vue3-draggable"
+import DownloadExelButtons from "../Tables/DownloadExelButtons.vue"
 
 export default {
-  components: { Draggable, },
+  components: { Draggable, DownloadExelButtons },
 
   name: 'tenders-table',
   props: {
@@ -122,12 +137,20 @@ export default {
       type: Number,
       required: true
     },
+    totalTenders: {
+      type: Number,
+      required: true
+    },
     page: {
+      type: Number,
+      required: true
+    },
+    length: {
       type: Number,
       required: true
     }
   },
-  emits: ['editTender', 'createTender', 'change'],
+  emits: ['editTender', 'createTender', 'change', 'search'],
 
   async mounted() {
     // получаем настройки таблицы с сервера и после обновляем рендер таблицы
@@ -135,7 +158,10 @@ export default {
     settingsData ? this.settingsTable = settingsData : '' 
     this.setSelectColumnsNames()
   },
+
   data: () => ({
+    searchText: '',
+    lastSearch: '',
     isTableEdit: false,
     selectedColumns: [],
     selectedColumnsNames: [],
@@ -228,6 +254,7 @@ export default {
       },
     ],
   }),
+
   computed: {
     rows() {
       return [...this.tenders]
@@ -236,13 +263,30 @@ export default {
     ...mapState(useAuthStore, {
       access: 'access'
     }),
+    exportColumns() {
+      const columnForExport = this.selectedColumns.map(column => {
+        return {
+          name: column.value,
+          field: column.name.replace('_', '.')
+        }
+      })
+
+      return JSON.stringify(columnForExport)
+    }
   },
+
   watch: {
     rows() {
       this.sortRows()
-    }
+    },
   },
+
   methods: {
+    searchTenders() {
+      if (this.searchText === null) this.searchText = ''
+      this.$emit('search', this.searchText)
+      this.lastSearch = this.searchText
+    },
     changePage(pageNumber) {
       this.$emit('change', pageNumber)
     },
@@ -293,7 +337,7 @@ export default {
           })
         newArr.push(fullObj)
       })
-      // console.log(newArr)
+      console.log(newArr)
       this.sortedRows = newArr
       // со свойствами без приставок
       // const filteredColumns = Object.keys(row)
@@ -361,6 +405,7 @@ export default {
           `
           break
         case 'inspection_approved':
+        case 'inspection_getting_signing_documents':
           return row[name] ? 'Да' : 'Нет'
         default:
         return `${row[name] ? row[name] : ''}`
