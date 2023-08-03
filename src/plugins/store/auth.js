@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', {
         keys: 1,
         tenders: 1,
         files: 1,
+        purchases: 1,
       }
     }
   },
@@ -24,6 +25,7 @@ export const useAuthStore = defineStore('auth', {
         keys: data.access_keys,
         tenders: data.access_tenders,
         files: data.access_files,
+        purchases: data.access_purchases,
       }
     },
     authLogout() {

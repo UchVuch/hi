@@ -12,7 +12,7 @@
           color="primary" 
           @click="closeMenu" 
           :download="`Тендеры ${search}${page}.xls`" 
-          :href="`api/tenders/export?start=${start}&length=${length}&columns=${columns}&seach=${search}`"
+          :href="`api/${pageName}/export?start=${start}&length=${length}&columns=${columns}&seach=${search}`"
         >
           текущая страница
         </v-btn>
@@ -20,7 +20,7 @@
           color="primary" 
           @click="closeMenu" 
           :download="'Все тендеры.xls'" 
-          :href="`api/tenders/export?start=0&length=${totalTenders}&columns=${columns}&seach=${search}`"
+          :href="`api/${pageName}/export?start=0&length=${totalTenders}&columns=${columns}&seach=${search}`"
         >
         все страницы
       </v-btn>
@@ -34,6 +34,10 @@ export default {
 name: 'download-exel-buttons',
 
 props: {
+  pageName: {
+    type: String,
+    required: true
+  },
   search: {
     type: String,
     required: true

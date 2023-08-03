@@ -1,12 +1,12 @@
 <template>
-  <div class="d-flex h-100" style="padding-top: 30vh;" v-if="access.tenders > 0">
+  <div class="d-flex h-100" style="padding-top: 30vh;" v-if="access.purchases > 0">
     <div class="table__wrapper w-100">
-      <TendersTable @editTender="openTenderModal" @createTender="openNewTenderModal" @change="changePage" @search="searchTenders" 
+      <PurchaseTable @editTender="openTenderModal" @createTender="openNewTenderModal" @change="changePage" @search="searchTenders" 
       :tenders="currentTenders" :totalPages="totalPages" :totalTenders="totalTenders" :page="page" :length="length"/>
     </div>
 
     <v-dialog v-model="tenderModal">
-      <TenderForm @close="tenderModal = false" @save="saveTender" @create="createTender" :tender="currentTender"/>
+      <PurchaseForm @close="tenderModal = false" @save="saveTender" @create="createTender" :tender="currentTender"/>
     </v-dialog>
   </div>
 </template>
@@ -17,16 +17,16 @@ import { getTenders, putTender, postTender } from "@/api"
 import { mapState } from 'pinia'
 import {useAuthStore} from '@/plugins/store/auth'
 
-import TendersTable from "../components/Tenders/TendersTable.vue"
-import TenderForm from "../components/Tenders/TenderForm.vue"
+import PurchaseTable from "@/components/Purchases/PurchaseTable.vue"
+import PurchaseForm from "@/components/Purchases/PurchaseForm.vue"
 
 export default {
-  components: { TendersTable, TenderForm, },
+  components: { PurchaseTable, PurchaseForm, },
   async mounted() {
     await this.getCurrentTenders()
   },
   data: () => ({
-    pageName: 'tenders',
+    pageName: 'purchases',
     tenderModal: false,
     start: 0,
     length: 10,

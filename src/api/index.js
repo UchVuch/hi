@@ -1,16 +1,16 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL
 
-// export async function getTenders(start, length, text='') {
-//   const res = await fetch(`${BASE_URL}/api/tenders?search=${text}&start=${start}&length=${length}`)
-//   if (res.status >= 400) {
-//     return false
-//   }
-//   const data = await res.json()
-//   return data
-// }
+export async function getTenders(page, start, length, text='') {
+  const res = await fetch(`${BASE_URL}/api/${page}?search=${text}&start=${start}&length=${length}`)
+  if (res.status >= 400) {
+    return false
+  }
+  const data = await res.json()
+  return data
+}
 
-export async function putTender(tender, id) {
-  const res = await fetch(`${BASE_URL}/api/tenders/${id}`, {
+export async function putTender(page, tender, id) {
+  const res = await fetch(`${BASE_URL}/api/${page}/${id}`, {
     method: 'PUT',
     body: JSON.stringify(tender),
     headers: {
@@ -19,8 +19,8 @@ export async function putTender(tender, id) {
   })
 }
 
-export async function postTender(tender) {
-  const res = await fetch(`${BASE_URL}/api/tenders`, {
+export async function postTender(page, tender) {
+  const res = await fetch(`${BASE_URL}/api/${page}`, {
     method: 'POST',
     body: JSON.stringify(tender),
     headers: {
@@ -29,8 +29,8 @@ export async function postTender(tender) {
   })
 }
 
-export async function setSettingsTable(settings) {
-  const res = await fetch(`${BASE_URL}/api/tenders/table_settings`, {
+export async function setSettingsTable(page, settings) {
+  const res = await fetch(`${BASE_URL}/api/${page}/table_settings`, {
     method: 'POST',
     body: JSON.stringify(settings),
     headers: {
@@ -39,15 +39,15 @@ export async function setSettingsTable(settings) {
   })
 }
 
-// export async function getSettingsTable() {
-//   const res = await fetch(`${BASE_URL}/api/tenders/table_settings`)
-//   if (res.status >= 400) {
-//     return false
-//   }
-//   const data = await res.json()
-//   // ожидаю внутри массив
-//   return data
-// }
+export async function getSettingsTable(page) {
+  const res = await fetch(`${BASE_URL}/api/${page}/table_settings`)
+  if (res.status >= 400) {
+    return false
+  }
+  const data = await res.json()
+  // ожидаю внутри массив
+  return data
+}
 
 export async function getRoles() {
   const response = await fetch(`${import.meta.env.VITE_VUE_APP_SERVER}api/roles`)
@@ -117,353 +117,260 @@ export async function logout() {
 }
 
 // моковый запрос настроек
-export async function getSettingsTable() {
-  return [
-    {
-      name: 'contract_seller_name',
-      value: 'Имя продавца',
-      hidden: true,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_customer_name',
-      value: 'Имя клиента',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_procuring',
-      value: 'Контракт',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_equipment',
-      value: 'Оборудование в контракте',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_number',
-      value: 'Номер договора',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_date',
-      value: 'Дата контракта',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_terms',
-      value: 'Условия контракта',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_addresses',
-      value: 'Адреса',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'contract_contacts',
-      value: 'Контакты',
-      hidden: false,
-      stage: 'contract',
-    },
-    {
-      name: 'shipment_date',
-      value: 'Дата отгрузки',
-      hidden: false,
-      stage: 'shipment',
-    },
-    {
-      name: 'shipment_equipment',
-      value: 'Отгрузка оборудования',
-      hidden: false,
-      stage: 'shipment',
-    },
-    {
-      name: 'shipment_tk_media',
-      value: 'ТК',
-      hidden: true,
-      stage: 'shipment',
-    },
-    {
-      name: 'shipment_receipt_media',
-      value: 'Квитанция',
-      hidden: true,
-      stage: 'shipment',
-    },
-    {
-      name: 'shipment_accounting_media',
-      value: 'Бухгалтерия',
-      hidden: true,
-      stage: 'shipment',
-    },
-    {
-      name: 'shipment_equipment_media',
-      value: 'Фото оборудования',
-      hidden: true,
-      stage: 'shipment',
-    },
-    {
-      name: 'inspection_payment',
-      value: 'Оплата',
-      hidden: false,
-      stage: 'inspection',
-    },
-    {
-      name: 'inspection_penalties',
-      value: 'Штраф',
-      hidden: false,
-      stage: 'inspection',
-    },
-    {
-      name: 'inspection_approved',
-      value: 'Одобрено',
-      hidden: false,
-      stage: 'inspection',
-    },
-    {
-      name: 'inspection_getting_signing_documents',
-      value: 'Получение/подписание документов',
-      hidden: false,
-      stage: 'inspection',
-    },
-    {
-      name: 'inspection_documents_media',
-      value: 'Фото документов',
-      hidden: true,
-      stage: 'inspection',
-    },
-  ]
-  // return [
-  //   {
-  //     name: 'contract.seller_name',
-  //     value: 'Имя продавца',
-  //     hidden: true,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.customer_name',
-  //     value: 'Имя клиента',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.procuring',
-  //     value: 'Контракт',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.equipment',
-  //     value: 'Оборудование в контракте',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.number',
-  //     value: 'Номер договора',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.date',
-  //     value: 'Дата контракта',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.terms',
-  //     value: 'Условия контракта',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.addresses',
-  //     value: 'Адреса',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'contract.contacts',
-  //     value: 'Контакты',
-  //     hidden: false,
-  //     stage: 'contract',
-  //   },
-  //   {
-  //     name: 'shipment.date',
-  //     value: 'Дата отгрузки',
-  //     hidden: false,
-  //     stage: 'shipment',
-  //   },
-  //   {
-  //     name: 'shipment.equipment',
-  //     value: 'Отгрузка оборудования',
-  //     hidden: false,
-  //     stage: 'shipment',
-  //   },
-  //   {
-  //     name: 'shipment.tk_media',
-  //     value: 'ТК',
-  //     hidden: true,
-  //     stage: 'shipment',
-  //   },
-  //   {
-  //     name: 'shipment.receipt_media',
-  //     value: 'Квитанция',
-  //     hidden: true,
-  //     stage: 'shipment',
-  //   },
-  //   {
-  //     name: 'shipment.accounting_media',
-  //     value: 'Бухгалтерия',
-  //     hidden: true,
-  //     stage: 'shipment',
-  //   },
-  //   {
-  //     name: 'shipment.equipment_media',
-  //     value: 'Фото оборудования',
-  //     hidden: true,
-  //     stage: 'shipment',
-  //   },
-  //   {
-  //     name: 'inspection.payment',
-  //     value: 'Оплата',
-  //     hidden: false,
-  //     stage: 'inspection',
-  //   },
-  //   {
-  //     name: 'inspection.penalties',
-  //     value: 'Штраф',
-  //     hidden: false,
-  //     stage: 'inspection',
-  //   },
-  //   {
-  //     name: 'inspection.approved',
-  //     value: 'Одобрено',
-  //     hidden: false,
-  //     stage: 'inspection',
-  //   },
-  //   {
-  //     name: 'inspection.getting_signing_documents',
-  //     value: 'Получение/подписание документов',
-  //     hidden: false,
-  //     stage: 'inspection',
-  //   },
-  //   {
-  //     name: 'inspection.documents_media',
-  //     value: 'Фото документов',
-  //     hidden: true,
-  //     stage: 'inspection',
-  //   },
-  // ]
-}
+// export async function getSettingsTable() {
+//   return [
+//     {
+//       name: 'equipment',
+//       value: 'Оборудование',
+//       hidden: false,
+//     },
+//     {
+//       name: 'date',
+//       value: 'Дата',
+//       hidden: false,
+//     },
+//     {
+//       name: 'amount',
+//       value: 'Сумма',
+//       hidden: false,
+//     }
+//   ]
+//   // return [
+//   //   {
+//   //     name: 'contract.seller_name',
+//   //     value: 'Имя продавца',
+//   //     hidden: true,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.customer_name',
+//   //     value: 'Имя клиента',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.procuring',
+//   //     value: 'Контракт',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.equipment',
+//   //     value: 'Оборудование в контракте',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.number',
+//   //     value: 'Номер договора',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.date',
+//   //     value: 'Дата контракта',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.terms',
+//   //     value: 'Условия контракта',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.addresses',
+//   //     value: 'Адреса',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'contract.contacts',
+//   //     value: 'Контакты',
+//   //     hidden: false,
+//   //     stage: 'contract',
+//   //   },
+//   //   {
+//   //     name: 'shipment.date',
+//   //     value: 'Дата отгрузки',
+//   //     hidden: false,
+//   //     stage: 'shipment',
+//   //   },
+//   //   {
+//   //     name: 'shipment.equipment',
+//   //     value: 'Отгрузка оборудования',
+//   //     hidden: false,
+//   //     stage: 'shipment',
+//   //   },
+//   //   {
+//   //     name: 'inspection.payment',
+//   //     value: 'Оплата',
+//   //     hidden: false,
+//   //     stage: 'inspection',
+//   //   },
+//   //   {
+//   //     name: 'inspection.penalties',
+//   //     value: 'Штраф',
+//   //     hidden: false,
+//   //     stage: 'inspection',
+//   //   },
+//   //   {
+//   //     name: 'inspection.approved',
+//   //     value: 'Одобрено',
+//   //     hidden: false,
+//   //     stage: 'inspection',
+//   //   },
+//   //   {
+//   //     name: 'inspection.getting_signing_documents',
+//   //     value: 'Получение/подписание документов',
+//   //     hidden: false,
+//   //     stage: 'inspection',
+//   //   },
+//   // ]
+// }
 
-// моковый запрос тендеров
-export async function getTenders(start, length) {
-  return {
-    records_total: 1, records_filtered: 100, data: [
-      {
-        id: 1,
-        contract: {
-          seller_name: 'name1',
-          customer_name: 'name2',
-          procuring: {
-            contract: { amount: 0, date: 1674651234 },
-            guarantee: { amount: 3452.43, date: 1674651234 },
-          },
-          equipment: [
-            {
-              name: "equip0",
-              count: 2,
-              price: 3555.33,
-              variation: "variation3",
-            },
-            {
-              name: "equip1",
-              count: 22,
-              price: 345.33,
-              variation: "variation1",
-            }
-          ],
-          number: 431,
-          date: 1684454400,
-          terms: {
-            date: 1684454400,
-            note: "text",
-          },
-          addresses: ["Адерс 1"],
-          contacts: ["Контакт 1"],
-        },
-        shipment: null,
-        inspection: null,
-      },
-      {
-        id: 2,
-        contract: {
-          seller_name: 'name3',
-          customer_name: 'name4',
-          procuring: {
-            contract: { amount: 0, date: 1674651234 },
-            guarantee: { amount: 3452.43, date: 1674651234 },
-          },
-          equipment: [
-            {
-              name: "equip0",
-              count: 2,
-              price: 3555.33,
-              variation: "variation3",
-            },
-            {
-              name: "equip1",
-              count: 22,
-              price: 345.33,
-              variation: "variation1",
-            }
-          ],
-          number: 431,
-          date: 1684454400,
-          terms: {
-            date: 1684454400,
-            note: "text",
-          },
-          addresses: ["Адерс 1"],
-          contacts: ["Контакт 1"],
-        },
-        shipment: {
-          date:1684454400,
-          equipment: [
-            {
-              name: "equip3",
-              count: 2,
-              price: 3555.33,
-              variation: "variation3",
-            },
-            {
-              name: "equip4",
-              count: 22,
-              price: 345.33,
-              variation: "variation1",
-            }
-          ],
-          tk_media: [1,2],
-          receipt_media: [3],
-          accounting_media: [],
-          equipment_media: []
-        },
-        inspection: {
-          payment: 200,
-          penalties: 30,
-          approved: true,
-          getting_signing_documents: true,
-          documents_media: [2]
-        },
-      },
-    ]
-  }
-}
+// // моковый запрос тендеров
+// export async function getTenders(start, length) {
+//   return {
+//     records_total: 1, records_filtered: 20, data: [
+//       {
+//         id: 1,
+//         date: 1684454400,
+//         amount: 2000,
+//         equipment: [
+//           {
+//             name: "equip2",
+//             count: 2,
+//             price: 3555.33,
+//             variation: "variation5",
+//           },
+//           {
+//             name: "equip3",
+//             count: 22,
+//             price: 345.33,
+//             variation: "variation6",
+//           }
+//         ]
+//       },
+//       {
+//         id: 2,
+//         date: 1684454400,
+//         amount: 1000,
+//         equipment: [
+//           {
+//             name: "equip0",
+//             count: 2,
+//             price: 3555.33,
+//             variation: "variation3",
+//           },
+//           {
+//             name: "equip1",
+//             count: 22,
+//             price: 345.33,
+//             variation: "variation1",
+//           }
+//         ]
+//       },
+//     ]
+//   }
+//   // return {
+//   //   records_total: 1, records_filtered: 100, data: [
+//   //     {
+//   //       id: 1,
+//   //       contract: {
+//   //         seller_name: 'name1',
+//   //         customer_name: 'name2',
+//   //         procuring: {
+//   //           contract: { amount: 0, date: 1674651234 },
+//   //           guarantee: { amount: 3452.43, date: 1674651234 },
+//   //         },
+//   //         equipment: [
+//   //           {
+//   //             name: "equip0",
+//   //             count: 2,
+//   //             price: 3555.33,
+//   //             variation: "variation3",
+//   //           },
+//   //           {
+//   //             name: "equip1",
+//   //             count: 22,
+//   //             price: 345.33,
+//   //             variation: "variation1",
+//   //           }
+//   //         ],
+//   //         number: 431,
+//   //         date: 1684454400,
+//   //         terms: {
+//   //           date: 1684454400,
+//   //           note: "text",
+//   //         },
+//   //         addresses: ["Адерс 1"],
+//   //         contacts: ["Контакт 1"],
+//   //       },
+//   //       shipment: null,
+//   //       inspection: null,
+//   //     },
+//   //     {
+//   //       id: 2,
+//   //       contract: {
+//   //         seller_name: 'name3',
+//   //         customer_name: 'name4',
+//   //         procuring: {
+//   //           contract: { amount: 0, date: 1674651234 },
+//   //           guarantee: { amount: 3452.43, date: 1674651234 },
+//   //         },
+//   //         equipment: [
+//   //           {
+//   //             name: "equip0",
+//   //             count: 2,
+//   //             price: 3555.33,
+//   //             variation: "variation3",
+//   //           },
+//   //           {
+//   //             name: "equip1",
+//   //             count: 22,
+//   //             price: 345.33,
+//   //             variation: "variation1",
+//   //           }
+//   //         ],
+//   //         number: 431,
+//   //         date: 1684454400,
+//   //         terms: {
+//   //           date: 1684454400,
+//   //           note: "text",
+//   //         },
+//   //         addresses: ["Адерс 1"],
+//   //         contacts: ["Контакт 1"],
+//   //       },
+//   //       shipment: {
+//   //         date:1684454400,
+//   //         equipment: [
+//   //           {
+//   //             name: "equip3",
+//   //             count: 2,
+//   //             price: 3555.33,
+//   //             variation: "variation3",
+//   //           },
+//   //           {
+//   //             name: "equip4",
+//   //             count: 22,
+//   //             price: 345.33,
+//   //             variation: "variation1",
+//   //           }
+//   //         ],
+//   //         tk_media: [1,2],
+//   //         receipt_media: [3],
+//   //         accounting_media: [],
+//   //         equipment_media: []
+//   //       },
+//   //       inspection: {
+//   //         payment: 200,
+//   //         penalties: 30,
+//   //         approved: true,
+//   //         getting_signing_documents: true,
+//   //         documents_media: [2]
+//   //       },
+//   //     },
+//   //   ]
+//   // }
+// }

@@ -1,11 +1,10 @@
 <template>
-  <div class="d-flex justify-space-between">
+  <div class="d-flex">
     <div class="table">
-      
       <div class="table__title d-flex justify-space-between">
-        <h2 class="text-h4 mb-8">Тендеры</h2>
-        <div class="d-flex ml-4" v-if="access.tenders > 1">
-          <download-exel-buttons :pageName="'tenders'" :search="lastSearch" :page="page" :length="length" :totalTenders="totalTenders" :columns="exportColumns"/>
+        <h2 class="text-h4 mb-8">Закупки</h2>
+        <div class="d-flex ml-4" v-if="access.purchases > 1">
+          <download-exel-buttons :pageName="'purchases'" :search="lastSearch" :page="page" :length="length" :totalTenders="totalTenders" :columns="exportColumns"/>
           <v-btn 
             @click="openNewTenderModal"
             class="mr-5 mb-2"
@@ -44,7 +43,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="tenders-none" v-if="!rows.length">Тендеров нет</tr>
+        <tr class="tenders-none" v-if="!rows.length">Закупок нет</tr>
         <tr v-for="row in sortedRows" :key="row.id" v-else>
           <td
             v-for="item in selectedColumns"
@@ -127,7 +126,7 @@ import DownloadExelButtons from "@/components/Tables/DownloadExelButtons.vue"
 export default {
   components: { Draggable, DownloadExelButtons },
 
-  name: 'tenders-table',
+  name: 'purchase-table',
   props: {
     tenders: {
       type: Object, 
@@ -160,7 +159,7 @@ export default {
   },
 
   data: () => ({
-    pageName: 'tenders',
+    pageName: 'purchases',
     searchText: '',
     lastSearch: '',
     isTableEdit: false,
@@ -170,89 +169,20 @@ export default {
     // стандартные настройки
     settingsTable: [
       {
-        name: 'contract_seller_name',
-        value: 'Имя продавца',
+        name: 'eqiupment',
+        value: 'Оборудование',
         hidden: false,
-        stage: 'contract',
       },
       {
-        name: 'contract_customer_name',
-        value: 'Имя клиента',
+        name: 'date',
+        value: 'Дата',
         hidden: false,
-        stage: 'contract',
       },
       {
-        name: 'contract_procuring',
-        value: 'Контракт',
+        name: 'amount',
+        value: 'Сумма',
         hidden: false,
-        stage: 'contract',
-      },
-      {
-        name: 'contract_equipment',
-        value: 'Оборудование в контракте',
-        hidden: false,
-        stage: 'contract',
-      },
-      {
-        name: 'contract_number',
-        value: 'Номер договора',
-        hidden: false,
-        stage: 'contract',
-      },
-      {
-        name: 'contract_date',
-        value: 'Дата контракта',
-        hidden: false,
-        stage: 'contract',
-      },
-      {
-        name: 'contract_terms',
-        value: 'Условия контракта',
-        hidden: false,
-        stage: 'contract',
-      },
-      {
-        name: 'contract_addresses',
-        value: 'Адреса',
-        hidden: false,
-        stage: 'contract',
-      },
-      {
-        name: 'contract_contacts',
-        value: 'Контакты',
-        hidden: false,
-        stage: 'contract',
-      },
-      {
-        name: 'shipment_date',
-        value: 'Дата отгрузки',
-        hidden: false,
-        stage: 'shipment',
-      },
-      {
-        name: 'shipment_equipment',
-        value: 'Отгрузка оборудования',
-        hidden: false,
-        stage: 'shipment',
-      },
-      {
-        name: 'inspection_payment',
-        value: 'Оплата',
-        hidden: false,
-        stage: 'inspection',
-      },
-      {
-        name: 'inspection_penalties',
-        value: 'Штраф',
-        hidden: false,
-        stage: 'inspection',
-      },
-      {
-        name: 'inspection_approved',
-        value: 'Одобрено',
-        hidden: false,
-        stage: 'inspection',
-      },
+      }
     ],
   }),
 
@@ -268,7 +198,7 @@ export default {
       const columnForExport = this.selectedColumns.map(column => {
         return {
           name: column.value,
-          field: column.name.replace('_', '.')
+          field: column.name
         }
       })
 
@@ -312,46 +242,8 @@ export default {
       this.selectedColumns = this.settingsTable.filter(row => !row.hidden)
     },
     sortRows() {
-      const columns = this.selectedColumnsNames
-      const newArr = []
-      this.rows.forEach(row => {
-        let fullObj = {
-          id: row.id,
-        }
-        // contract{}, shipment{}, inspection{}
-        const stageObg = Object.keys(row)
-          .forEach(stage => {
-            if (row[stage]) {
-              const stageObj = Object.keys(row[stage])
-                .reduce((obj, key) => {
-                  const objKey = `${stage}_${key}`
-                  if (columns.includes(objKey)) {
-                    obj[objKey] = row[stage][key]
-                  }
-                  return obj
-                }, {})
-                fullObj = {
-                  ...fullObj,
-                  ...stageObj
-                }
-            }
-          })
-        newArr.push(fullObj)
-      })
-      console.log(newArr)
-      this.sortedRows = newArr
-      // со свойствами без приставок
-      // const filteredColumns = Object.keys(row)
-      //   .reduce((obj, key) => {
-      //     if (columns.includes(key)) {
-      //       obj[key] = row[key]
-      //     }
-      //     return obj
-      //   }, {})
-      //   newArr.push(filteredColumns)
-      // })
-      // console.log(newArr)
-      // return newArr
+      this.sortedRows = [...this.rows]
+      console.log(this.sortedRows)
     },
     setSelectColumnsNames() {
       this.selectedColumnsNames = this.settingsTable.map(row => row.name)
@@ -372,18 +264,10 @@ export default {
     },
     renderTableCell(name, row) {
       switch (name) {
-        case 'contract_date':
-        case 'shipment_date':
+        case 'date':
           return `${row[name] ? formatToDate(row[name]) : ''}`
           break
-        case 'contract_procuring':
-          return `
-            Контракт — ${row[name].contract.amount} / ${formatToDate(row[name].contract.date)} <br>
-            Гарантия — ${row[name].guarantee.amount} / ${formatToDate(row[name].contract.date)}
-          `
-          break
-        case 'contract_equipment':
-        case 'shipment_equipment':
+        case 'equipment':
           return `
             ${
               row[name] 
@@ -394,20 +278,6 @@ export default {
             }
           `
           break
-        case 'contract_addresses':
-        case 'contract_contacts':
-          return `
-            ${row[name] ? row[name].join(',') : ''}
-          `
-          break
-        case 'contract_terms':
-          return `
-            ${row[name].date ? formatToDate(row[name].date) : row[name].note}
-          `
-          break
-        case 'inspection_approved':
-        case 'inspection_getting_signing_documents':
-          return row[name] ? 'Да' : 'Нет'
         default:
         return `${row[name] ? row[name] : ''}`
       }

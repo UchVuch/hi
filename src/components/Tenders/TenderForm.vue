@@ -171,8 +171,8 @@
                           <template v-if="isImage(file)">
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
-                                <img :src="`${mediaContentPath}${id}/tk_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini">
-                                <span class="ml-5"> {{ file.name }} </span>
+                                <img :src="`${mediaContentPath}${id}/tk_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini" @click="openWatchImage(file.name)" title="Посмотреть фото">
+                                <span class="mr-3 media-file__name" :title="file.name"> {{ file.name }} </span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn class="mr-3" color="primary" size="small" title="Посмотреть фото"  @click="openWatchImage(`${mediaContentPath}${id}/tk_media/${file.name}?as_photo=true`)">
                                     <v-icon icon="mdi-eye"></v-icon>
@@ -197,7 +197,7 @@
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
                                 <v-icon icon="mdi-file"></v-icon>
-                                <span class="ml-5">{{ file.name }}</span>
+                                <span class="mr-3 media-file__name" :title="file.name">{{ file.name }}</span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn :download="file.name" :href="`${mediaContentPath}${id}/tk_media/${file.name}`" color="add-new" size="small" title="Скачать файл">
                                     <v-icon icon="mdi-arrow-down-box"></v-icon>
@@ -234,8 +234,8 @@
                           <template v-if="isImage(file)">
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
-                                <img :src="`${mediaContentPath}${id}/receipt_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini">
-                                <span class="ml-5"> {{ file.name }} </span>
+                                <img :src="`${mediaContentPath}${id}/receipt_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini" @click="openWatchImage(file.name)" title="Посмотреть фото">
+                                <span class="mr-3 media-file__name" :title="file.name"> {{ file.name }} </span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn class="mr-3" color="primary" size="small" title="Посмотреть фото"  @click="openWatchImage(`${mediaContentPath}${id}/receipt_media/${file.name}?as_photo=true`)">
                                     <v-icon icon="mdi-eye"></v-icon>
@@ -260,7 +260,7 @@
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
                                 <v-icon icon="mdi-file"></v-icon>
-                                <span class="ml-5">{{ file.name }}</span>
+                                <span class="mr-3 media-file__name" :title="file.name">{{ file.name }}</span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn :download="file.name" :href="`${mediaContentPath}${id}/receipt_media/${file.name}`" color="add-new" size="small" title="Скачать файл">
                                     <v-icon icon="mdi-arrow-down-box"></v-icon>
@@ -297,8 +297,8 @@
                           <template v-if="isImage(file)">
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
-                                <img :src="`${mediaContentPath}${id}/equipment_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini">
-                                <span class="ml-5"> {{ file.name }} </span>
+                                <img :src="`${mediaContentPath}${id}/equipment_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini" @click="openWatchImage(file.name)" title="Посмотреть фото">
+                                <span class="mr-3 media-file__name" :title="file.name"> {{ file.name }} </span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn class="mr-3" color="primary" size="small" title="Посмотреть фото"  @click="openWatchImage(`${mediaContentPath}${id}/equipment_media/${file.name}?as_photo=true`)">
                                     <v-icon icon="mdi-eye"></v-icon>
@@ -323,7 +323,7 @@
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
                                 <v-icon icon="mdi-file"></v-icon>
-                                <span class="ml-5">{{ file.name }}</span>
+                                <span class="mr-3 media-file__name" :title="file.name">{{ file.name }}</span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn :download="file.name" :href="`${mediaContentPath}${id}/equipment_media/${file.name}`" color="add-new" size="small" title="Скачать файл">
                                     <v-icon icon="mdi-arrow-down-box"></v-icon>
@@ -360,8 +360,8 @@
                           <template v-if="isImage(file)">
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
-                                <img :src="`${mediaContentPath}${id}/tk_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini">
-                                <span class="ml-5"> {{ file.name }} </span>
+                                <img :src="`${mediaContentPath}${id}/tk_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini" @click="openWatchImage(file.name)" title="Посмотреть фото">
+                                <span class="mr-3 media-file__name" :title="file.name"> {{ file.name }} </span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn class="mr-3" color="primary" size="small" title="Посмотреть фото"  @click="openWatchImage(`${mediaContentPath}${id}/accounting_media/${file.name}?as_photo=true`)">
                                     <v-icon icon="mdi-eye"></v-icon>
@@ -386,7 +386,7 @@
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex align-center w-100 mb-3">
                                 <v-icon icon="mdi-file"></v-icon>
-                                <span class="ml-5">{{ file.name }}</span>
+                                <span class="mr-3 media-file__name" :title="file.name">{{ file.name }}</span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn :download="file.name" :href="`${mediaContentPath}${id}/accounting_media/${file.name}`" color="add-new" size="small" title="Скачать файл">
                                     <v-icon icon="mdi-arrow-down-box"></v-icon>
@@ -457,8 +457,8 @@
                           <template v-if="isImage(file)">
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex">
-                                <img :src="`${mediaContentPath}${id}/tk_media/${file.name}?as_photo=true`" width="40" height="40" class="mr-4 image-mini">
-                                <span class="ml-5"> {{ file.name }} </span>
+                                <img :src="file.name" width="40" height="40" class="mr-4 image-mini" @click="openWatchImage(`${mediaContentPath}${id}/documents_media/${file.name}?as_photo=true`)" title="Посмотреть фото">
+                                <span class="mr-3 media-file__name" :title="file.name"> {{ file.name }} </span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn class="mr-3" color="primary" size="small" title="Посмотреть фото"  @click="openWatchImage(`${mediaContentPath}${id}/documents_media/${file.name}?as_photo=true`)">
                                     <v-icon icon="mdi-eye"></v-icon>
@@ -483,7 +483,7 @@
                             <v-col cols="12" md="6" lg="4" xl="3">
                               <div class="d-flex">
                                 <v-icon icon="mdi-file" size="x-large"></v-icon>
-                                <span class="ml-5">{{ file.name }}</span>
+                                <span class="mr-3 media-file__name" :title="file.name">{{ file.name }}</span>
                                 <div class="d-flex" style="margin-left:auto;">
                                   <v-btn :download="file.name" :href="`${mediaContentPath}${id}/documents_media/${file.name}`" color="add-new" size="small" title="Скачать файл">
                                     <v-icon icon="mdi-arrow-down-box"></v-icon>
@@ -526,14 +526,14 @@
       </v-card-actions>
     </v-card>
 
-    <v-dialog v-model="watchImage">
+    <v-dialog v-model="watchImage" @keyup.esc="closeWatchImage">
       <div class="d-flex justify-end">
-        <v-btn @click="enlargeWatchImage" class="mr-2" size="small"><v-icon icon="mdi-magnify-plus"></v-icon></v-btn>
-        <v-btn @click="reduceWatchImage" class="mr-2" size="small"><v-icon icon="mdi-magnify-minus"></v-icon></v-btn>
-        <span @click="closeWatchImage" style="cursor: pointer;">Закрыть</span>
+        <v-btn @click="enlargeWatchImage" class="mr-2" title="Увеличить" color="default" size="small"><v-icon icon="mdi-magnify-plus"></v-icon></v-btn>
+        <v-btn @click="reduceWatchImage" class="mr-2" title="Уменьшить" color="default" size="small"><v-icon icon="mdi-magnify-minus"></v-icon></v-btn>
+        <v-btn @click="closeWatchImage" title="Закрыть" color="default" size="small"><v-icon icon="mdi-close"></v-icon></v-btn>
       </div>
-      <div style="overflow: auto; display: flex; justify-content: center; align-items: center; padding: 10px; width: 92w; height: 92vh;">
-        <img :src="currentWatchImage" alt="" id="image1" style="max-height: 90vh; max-width: 80vw;">
+      <div style="overflow: auto; display: flex; justify-content: center; align-items: center; padding: 10px; width: 92w; height: 92vh;" @click="closeWatchImage">
+        <img :src="currentWatchImage" alt="" id="image1" style="max-height: 90vh; max-width: 80vw;" @click.stop>
       </div>
     </v-dialog>
 
@@ -597,7 +597,7 @@ import currentDate from '@/helpers/currentDate'
 import formatToDate from '@/helpers/formatToDate'
 import formatFromDate from '@/helpers/formatFromDate'
 
-import TenderEquipmentForm from './TenderEquipmentForm.vue'
+import TenderEquipmentForm from '../Tenders/TenderEquipmentForm.vue'
 
 export default {
   components: { TenderEquipmentForm },
@@ -981,5 +981,18 @@ export default {
 
 #fileinput {
   display: none;
+}
+
+.image-mini {
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.media-file__name {
+  max-width: 50%;
+  height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
