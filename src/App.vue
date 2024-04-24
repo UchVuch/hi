@@ -1,38 +1,40 @@
+<script setup>
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import MainHeader from '@/components/layouts/MainHeader.vue'
+import MainSidebar from '@/components/layouts/MainSidebar.vue'
+console.log('aaa')
+const route = useRoute()
+watch(
+  () => route.name, 
+  () => _sidevarShow.value = false
+)
+
+const _sidevarShow = ref(false)
+</script>
+
 <template>
-  <v-app :class="{ 'padding-left--active': sidebarShow && $route.name !== 'home', 'padding-left': !sidebarShow }">
-    <app-bar @show="sidebarShow = !sidebarShow"></app-bar>
-    <app-navigation v-model="sidebarShow"></app-navigation>
-    <router-view></router-view>
+  <v-app
+    :class="{
+      'padding-left--active': _sidevarShow && route.name !== 'home',
+      'padding-left': !_sidevarShow,
+    }"
+  >
+    <main-header
+      v-if="true"
+      @show="_sidevarShow = !_sidevarShow"
+    />
+    <main-sidebar v-model="_sidevarShow" />
+    <router-view />
   </v-app>
 </template>
-<script>
-import AppBar from './components/AppBar.vue'
-import AppNavigation from './components/AppNavigation.vue'
 
-export default {
-  components: { AppBar, AppNavigation },
-
-    mounted() {
-      this.$router.push('/')
-      console.log(this.name)
-    },
-
-    data: () => ({
-        sidebarShow: false,
-    }),
-
-    watch:{
-    $route (to, from){
-      if (this.$route.name === 'home') this.sidebarShow = false
-    }
-} 
-}
-</script>
 <style scoped>
 .padding-left--active {
   padding-left: 200px;
   transition: padding 0.3s ease;
 }
+
 .padding-left {
   padding-left: 0px;
   transition: padding 0.3s ease;
